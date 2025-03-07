@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 // import { categories, products, ProductCategory } from '../data/products';
-import Image from 'next/image';
 import { useFetchData } from '@/app/hooks/useFetchData';
 import { Product } from '../types/products';
 import { Coffee, Package, ShoppingBag } from 'lucide-react';

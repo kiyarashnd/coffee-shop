@@ -12,7 +12,6 @@ import { useFetchData } from '@/app/hooks/useFetchData';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
-  const productId = String(id);
 
   const { data, isLoading, error } = useFetchData(id as string); // Pass ID to fetch a single product
 
