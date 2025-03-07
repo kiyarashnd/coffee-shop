@@ -1,8 +1,10 @@
 // app/components/Hero.tsx
 import React from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
 const Hero = () => {
+  const { push } = useRouter();
   return (
     <Box
       sx={{
@@ -40,6 +42,7 @@ const Hero = () => {
             borderRadius: '35px',
             width: '188.97px',
           }}
+          onClick={() => push('/products')}
         >
           نمایش محصولات
         </Button>
