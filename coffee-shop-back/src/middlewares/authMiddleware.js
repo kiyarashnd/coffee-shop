@@ -1,26 +1,28 @@
 const jwt = require('jsonwebtoken');
 
-exports.authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization');
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied' });
-  }
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access_secret';
 
-  try {
-    const decoded = jwt.verify(
-      token.replace('Bearer ', ''),
-      process.env.JWT_SECRET
-    );
-    req.user = decoded;
+// 🔹 Middleware to protect routes
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Extract token
+
+  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Forbidden' });
+
+    req.user = user;
     next();
-  } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
-  }
+  });
 };
 
-exports.adminMiddleware = (req, res, next) => {
+// 🔹 Middleware to restrict access to admin (Koorosh)
+const isAdmin = (req, res, next) => {
   if (req.user.username !== 'koorosh') {
     return res.status(403).json({ message: 'Access denied' });
   }
   next();
 };
+
+module.exports = { authenticateToken, isAdmin };

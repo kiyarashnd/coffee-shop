@@ -1,11 +1,8 @@
-export const formatPriceToToman = (
-  value: string | number,
-  locale: string = 'fa-IR'
-): string => {
-  const number = typeof value === 'string' ? parseFloat(value) : value;
+export const formatPriceToToman = (value: string | number): string => {
+  const number = typeof value === 'string' ? Number(value) : value;
   const tomanValue = number / 10; // Convert Rials to Tomans
   return (
-    new Intl.NumberFormat(locale, {
+    new Intl.NumberFormat('fa-IR', {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,

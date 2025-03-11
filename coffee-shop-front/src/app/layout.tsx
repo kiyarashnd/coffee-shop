@@ -4,8 +4,8 @@ import React from 'react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import './globals.css'; // Optional: your global CSS
 import localFont from 'next/font/local';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();

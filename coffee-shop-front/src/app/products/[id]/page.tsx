@@ -8,7 +8,7 @@ import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
-import { useFetchData } from '@/app/hooks/useFetchData';
+import { useFetchData } from '@/hooks/useFetchData';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();

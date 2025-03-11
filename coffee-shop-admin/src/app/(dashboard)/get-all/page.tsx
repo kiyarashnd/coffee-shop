@@ -40,74 +40,49 @@ type RowData = {
 };
 
 function GetAllpage() {
+  const { push } = useRouter();
+
   const [selectRow, setSelectRow] = useState('');
 
   const deleteStaticRoute = async () => {
     const confirm = window.confirm('آیا از حذف این آیتم مطمئن هستید؟');
     if (confirm) {
-      const formData = new FormData();
-      formData.append('Id', selectRow);
       try {
-        // await Api.deleteAdministrators({
-        //   Id: selectRow,
-        // }).enq();
-
-        const response = await fetch(`${BASE_URL}/v1/Admin/Properties/Delete`, {
-          method: 'DELETE',
-          // headers: {
-          //   'Content-Type': 'multipart/form-data',
-          // },
-          body: formData,
-        });
-
-        const result = await response.json();
+        const result = await Api.deleteAdministrators(selectRow).enq();
         console.log('response is : ', result);
         mutate();
-
-        toast.success(`item deleted successfully`);
+        toast.success(`آیتم مورد نظر با موفقیت حذف شد`);
+        setSelectRow('');
       } catch (error) {
         console.log('ERROR', error);
       }
     }
   };
 
-  const { data: rowData, mutate } = useSWR(`/1/40/`, () =>
-    Api.GetAllProperties().enq()
-  );
-  console.log('data is : ', rowData?.value?.items);
+  const { data, mutate } = useSWR(`/`, () => Api.GetAllProperties().enq());
 
   const gridRef = useRef<AgGridReact>(null);
 
   const [columnDefs] = useState<ColDef[]>([
-    { field: 'title', headerName: 'عنوان', filter: false },
-    { field: 'city', headerName: 'شهر', filter: false },
-    { field: 'state', headerName: 'استان', filter: false },
+    { field: 'name', headerName: 'عنوان', filter: false },
+    { field: 'description', headerName: 'توضیحات', filter: false },
     { field: 'price', headerName: 'قیمت', filter: false },
-    { field: 'documentKind', headerName: 'نوع سند', filter: false },
   ]);
 
-  const [tableData, setTableData] = useState(rowData?.value?.items);
+  const [tableData, setTableData] = useState(data);
 
   useEffect(() => {
     setTableData(
-      rowData?.value?.items?.map((item: any) => {
+      data?.map((item: any) => {
         return {
           ...item,
-          title: item?.title,
           city: item?.city,
-          state: item?.state,
           price: formatPriceToToman(item?.price),
-          documentKind: item?.documentKind?.title,
+          description: item?.description,
         };
       })
     );
-  }, [rowData]);
-
-  useEffect(() => {
-    fetch(`${BASE_URL}/1/50`)
-      .then((resp) => resp.json())
-      .then((data: any) => console.log('data issssssssssss : ', data?.value));
-  }, []);
+  }, [data]);
 
   // const onGridReady = useCallback((params: GridReadyEvent) => {
   //   fetch(`${BASE_URL}/1/50`)
@@ -140,8 +115,9 @@ function GetAllpage() {
         ref={gridRef}
         groupDefaultExpanded={-1}
         onRowSelected={(e) => {
-          setSelectRow(e.data.id);
+          setSelectRow(e.data._id);
         }}
+        onRowDoubleClicked={() => push(`/area/${selectRow}`)}
         headerClassName='px-2 py-2'
         headerStart={
           <>
@@ -149,6 +125,7 @@ function GetAllpage() {
               className='flex items-center gap-1 h-[24px] px-1 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-100'
               color='#262626'
               onClick={() => deleteStaticRoute()}
+              disabled={selectRow === ''}
             >
               <Icon path={mdiTrashCanOutline} size={0.8} /> حذف
             </button>

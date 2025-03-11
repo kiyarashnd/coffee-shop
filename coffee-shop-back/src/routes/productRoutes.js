@@ -7,11 +7,9 @@ const {
   addProduct,
   deleteProduct,
   findProductById,
+  updateProduct,
 } = require('../controllers/productController');
-const {
-  authMiddleware,
-  adminMiddleware,
-} = require('../middleware/authMiddleware');
+const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 
 const storage = multer.memoryStorage(); // حتما memoryStorage استفاده کن برای Minio
 const upload = multer({ storage });
@@ -19,12 +17,19 @@ const upload = multer({ storage });
 router.get('/', getProducts); // گرفتن همه محصولات
 router.post(
   '/',
-  authMiddleware,
-  adminMiddleware,
+  authenticateToken,
+  isAdmin,
   upload.single('image'),
   addProduct
-); // افزودن محصول با تصویر
-router.delete('/:id', authMiddleware, adminMiddleware, deleteProduct); // حذف محصول
+);
+router.put(
+  '/:id',
+  authenticateToken,
+  isAdmin,
+  upload.single('image'),
+  updateProduct
+); // ✨ ویرایش محصول
+router.delete('/:id', authenticateToken, isAdmin, deleteProduct); // حذف محصول
 router.get('/:id', findProductById);
 
 module.exports = router;

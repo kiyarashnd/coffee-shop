@@ -14,81 +14,46 @@ export namespace Api {
   }
 
   export function GetAllProperties() {
-    return new Fetcher<any>(new URL(`${BASE_URL}/1/50`), {
+    return new Fetcher<any>(new URL(`${BASE_URL}/api/products`), {
       method: 'GET',
     });
   }
 
-  export function GetPropertyKinds() {
+  export function getOneProduct(id: string) {
     return new Fetcher<any>(
-      new URL(`${BASE_URL}/v1/Enum/PropertyKind
-		`),
+      new URL(`${BASE_URL}/api/products/${id ? id : ''}`),
       {
         method: 'GET',
       }
     );
   }
 
-  export function GetPropertyDocumentKind() {
-    return new Fetcher<any>(
-      new URL(`${BASE_URL}/v1/Enum/PropertyDocumentKind
-		`),
-      {
-        method: 'GET',
-      }
-    );
-  }
-
-  export function AddArea(newUser: { name: string; stateId: string }) {
-    return new Fetcher<any>(new URL(`${BASE_URL}/v1/Admin/Cities/AddArea`), {
+  export function signin(newUser: { username: string; password: string }) {
+    return new Fetcher<any>(new URL(`${BASE_URL}/api/auth/login`), {
       method: 'POST',
       // headers: {
       //   'content-Type': 'application/json',
       // },
-      body: JSON.stringify(newUser),
-    });
-  }
-
-  export function AddState(newUser: { name: string }) {
-    return new Fetcher<any>(
-      new URL(`${BASE_URL}/v1/Admin/Cities/AddState
-`),
-      {
-        method: 'POST',
-        // headers: {
-        //   'content-Type': 'application/json',
-        // },
-        body: JSON.stringify(newUser),
-      }
-    );
-  }
-
-  export function GetCitiesWithStateId(token: any) {
-    return new Fetcher<any>(
-      new URL(`${BASE_URL}/v1/Cities/GetCitiesWithStateId/${token}
-		`),
-      {
-        method: 'GET',
-      }
-    );
-  }
-
-  export function signin(newUser: { PhoneNumber: string; Password: string }) {
-    return new Fetcher<any>(new URL(`${BASE_URL}/v1/User/Login`), {
-      method: 'POST',
-      // headers: {
-      //   'content-Type': 'application/json',
-      // },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(newUser),
       // credentials: "include",
       // mode: "no-cors",
     });
   }
 
-  export function deleteAdministrators(idAdmin: any) {
-    return new Fetcher(new URL(`${BASE_URL}/v1/Admin/Properties/Delete`), {
+  export function postProduct(product: any) {
+    return new Fetcher<any>(new URL(`${BASE_URL}/api/products`), {
+      method: 'POST',
+      body: product,
+    });
+  }
+
+  export function deleteAdministrators(idProduct: string) {
+    return new Fetcher(new URL(`${BASE_URL}/api/products/${idProduct}`), {
       method: 'DELETE',
-      body: JSON.stringify(idAdmin),
+      // body: JSON.stringify(idProduct),
     });
   }
 }

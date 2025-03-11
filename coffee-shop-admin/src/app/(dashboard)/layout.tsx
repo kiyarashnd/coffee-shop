@@ -39,22 +39,16 @@ export default function MainLayout(props: { children: ReactElement }) {
     <div>
       <div className='flex gap-4 m-4'>
         <Link
-          href='/ostan'
-          className='border-b border-black hover:text-gray-500'
-        >
-          استان و منطقه
-        </Link>
-        <Link
           href='/area'
           className='border-b border-black hover:text-gray-500'
         >
-          ملک
+          اضافه کردن محصول جدید
         </Link>
         <Link
           href='/get-all'
           className='border-b border-black hover:text-gray-500'
         >
-          نمایش همه
+          نمایش همه محصولات
         </Link>
         <div
           // onClick={() => {

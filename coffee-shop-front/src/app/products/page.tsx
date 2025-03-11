@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 // import { categories, products, ProductCategory } from '../data/products';
-import { useFetchData } from '@/app/hooks/useFetchData';
-import { Product } from '../types/products';
+import { useFetchData } from '@/hooks/useFetchData';
+import { Product } from '@/types/products';
 import { Coffee, Package, ShoppingBag } from 'lucide-react';
 
 const Products: React.FC = () => {
@@ -52,7 +52,7 @@ const Products: React.FC = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className='min-h-screen bg-white pt-24'>
+    <div className='min-h-screen bg-white pt-2'>
       <div className='container mx-auto px-6 py-12'>
         <h1 className='text-3xl md:text-4xl font-serif font-bold text-text-primary text-center mb-8'>
           محصولات ما
@@ -112,7 +112,7 @@ const Products: React.FC = () => {
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {data.map((product: Product) => (
+            {data?.map((product: Product) => (
               <Link
                 href={`/products/${product?._id}`}
                 key={product?._id}
