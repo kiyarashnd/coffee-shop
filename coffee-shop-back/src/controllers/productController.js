@@ -77,6 +77,7 @@ exports.findProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
+    console.log('req.body', req.body);
     const { name, price, description } = req.body;
     const productId = req.params.id;
 
@@ -85,21 +86,25 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    let imageUrl = product.image;
+    // let imageUrl = product.image;
+
     if (req.file) {
       // حذف عکس قدیمی از MinIO
       const oldImageKey = product.image.split('/').slice(-1)[0];
-      await minioClient.removeObject(BUCKET_NAME, `products/${oldImageKey}`);
+      // await minioClient.removeObject(BUCKET_NAME, `products/${oldImageKey}`);
+      await minioClient.destroy(BUCKET_NAME, `products/${oldImageKey}`);
 
       // آپلود عکس جدید
       const uploadedImage = await uploadFile(req.file);
       imageUrl = uploadedImage.url;
     }
 
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.description = description || product.description;
-    product.image = imageUrl;
+    const uploadedImage = await uploadFile(req.file);
+
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.image = uploadedImage.url;
 
     await product.save();
     res.json({ message: 'Product updated successfully', product });

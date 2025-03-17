@@ -1,9 +1,9 @@
 // app/components/FeaturedCoffees.tsx
+'use client';
 import React from 'react';
 import {
   Container,
   Typography,
-  Grid,
   Card,
   CardMedia,
   CardContent,
@@ -57,6 +57,10 @@ const FeaturedCoffees = () => {
     return <div>loading...</div>;
   }
 
+  if (error) {
+    return <div>error while fetch data...</div>;
+  }
+
   return (
     // <Container sx={{ py: { xl: 8, xs: 2 }, direction: 'rtl' }} maxWidth='md'>
     <Container sx={{ py: { xl: 8, xs: 2 }, direction: 'rtl' }}>
@@ -106,7 +110,10 @@ const FeaturedCoffees = () => {
           <SwiperSlide>Slide 4</SwiperSlide>
           ... */}
           {coffeeList?.map((coffee, index) => (
-            <SwiperSlide onClick={() => push(`/products/${coffee?._id}`)}>
+            <SwiperSlide
+              onClick={() => push(`/products/${coffee?._id}`)}
+              key={index}
+            >
               <Card
                 className='cursor-pointer'
                 key={index}

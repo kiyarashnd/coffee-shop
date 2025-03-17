@@ -14,17 +14,13 @@ import Image from 'next/image';
 import Icon from '@mdi/react';
 import { mdiDeleteOutline, mdiPlusCircleOutline } from '@mdi/js';
 import { toast } from 'react-toastify';
-import { useStaticParams } from '@/hooks/useStaticParams';
 import { usePathname } from 'next/navigation';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { useRouter } from 'next/navigation';
 
 type FormInterface = {
   name: string;
   description: string;
-
-  price?: number | null;
-
+  price: number;
   image?: any;
 };
 
@@ -32,17 +28,17 @@ const formSchema: ObjectSchema<FormInterface> = yup.object().shape({
   name: yup.string().required('عنوان را وارد کنید'),
   description: yup.string().required('توضیحات را وارد کنید'),
 
-  price: yup
-    .number()
-    .transform((value, originalValue) =>
-      originalValue?.trim() === '' ? null : value
-    )
-    .nullable(),
+  price: yup.number().required('قیمت را وارد کنید'),
+  // .transform((value, originalValue) =>
+  //   originalValue?.trim() === '' ? null : value
+  // )
+  // .nullable(),
 
   image: yup.mixed(),
 });
 
 const Area = () => {
+  const { push } = useRouter();
   const pathname = usePathname();
   const id = pathname?.split('/')?.[2];
 
@@ -54,23 +50,31 @@ const Area = () => {
     setValue,
     control,
     watch,
+    reset,
     formState: { errors },
   } = useForm<FormInterface>({
     resolver: yupResolver(formSchema),
-    // defaultValues: {},
     values: {
       description: data?.description ? data?.description : '',
       name: data?.name ? data?.name : '',
-      image: data?.image ? [data?.image] : undefined,
+      image: data?.image
+        ? [
+            // {
+            //   path: 'coffe.jpg',
+            //   preview: `blob:${data?.image}`,
+            // },
+            new File([`blob:${data?.image}`], 'name.jpg'),
+          ]
+        : undefined,
       price: data?.price ? data?.price : '',
     },
     mode: 'all',
   });
 
-  const images = watch('image');
+  const name = watch('name');
   useEffect(() => {
-    console.log('images is : ', images);
-  }, [images]);
+    console.log('name is : ', name);
+  }, [name]);
 
   const onSubmit = async (data: FormInterface) => {
     try {
@@ -90,11 +94,16 @@ const Area = () => {
       //   body: formData,
       // });
 
-      const response = await Api.postProduct(formData).enq();
-
-      const result = await response;
-      console.log('response is : ', result);
+      // const response = await Api.postProduct(formData).enq();
+      if (id === undefined) {
+        await Api.postProduct(formData).enq();
+      } else {
+        await Api.updataProduct({ data, id }).enq();
+      }
+      // const result = await response;
+      // console.log('response is : ', result);
       toast.success(`محصول جدید اضافه شد`);
+      push('/get-all');
     } catch (error) {
       toast.error('اطلاعات نادرست است!');
       console.log('error', error);
@@ -103,14 +112,33 @@ const Area = () => {
 
   const [imagesPreview, setimagesPreview] = useState<File[]>([]);
 
+  useEffect(() => {
+    if (data) {
+      const existingImage = data.image
+        ? [
+            Object.assign(new File([], 'existing.jpg'), {
+              preview: data.image, // Backend image URL
+            }),
+          ]
+        : [];
+
+      // reset({
+      //   name: data.name || '',
+      //   description: data.description || '',
+      //   price: data.price || null,
+      //   image: existingImage,
+      // });
+
+      setimagesPreview(existingImage); // Set preview for UI
+    }
+  }, [data]);
+
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({
-      // accept: { 'image/jpeg': [], 'image/png': [] },
       accept: { 'image/*': [] },
 
       onDrop: (files) => {
         setimagesPreview([...imagesPreview, ...files]);
-
         setValue('image', [...imagesPreview, ...files]);
 
         files.map((file) =>
@@ -120,8 +148,6 @@ const Area = () => {
         );
       },
     });
-
-  console.log('errors is :', errors);
 
   return (
     <form
@@ -161,7 +187,7 @@ const Area = () => {
       <section className='flex flex-col gap-2'>
         <fieldset className='flex flex-col sm:flex-row sm:gap-3 sm:items-center gap-1 md:justify-center'>
           <div>
-            {!imagesPreview.length && (
+            {!imagesPreview?.length && (
               <div
                 {...getRootProps({
                   className: `
@@ -186,7 +212,7 @@ const Area = () => {
               </div>
             )}
 
-            {imagesPreview.length > 0 && (
+            {imagesPreview?.length > 0 && (
               <div className='flex gap-4 max-w-[18rem] overflow-scroll'>
                 <div
                   {...getRootProps({
@@ -210,9 +236,6 @@ const Area = () => {
                     افزودن
                     <Icon path={mdiPlusCircleOutline} size={1.1} />
                   </p>
-                  {/* <p className='hidden md:block'>
-                    عکس خود را به اینجا بیندازید یا برای انتخاب تصویر کلیک کنید.
-                  </p> */}
                 </div>
 
                 {imagesPreview.map((img: any, index: number) => {
@@ -225,10 +248,10 @@ const Area = () => {
                         <div className='flex min-w-0 overflow-hidden'>
                           <Image
                             alt='image'
-                            src={img.preview}
+                            src={img?.preview}
                             className='block h-full rounded-lg'
                             onLoad={() => {
-                              URL.revokeObjectURL(img.preview);
+                              URL.revokeObjectURL(img?.preview);
                             }}
                             width={100}
                             height={100}
@@ -248,7 +271,7 @@ const Area = () => {
                           setimagesPreview(filteredFiles);
                           setValue('image', [...filteredFiles]);
 
-                          imagesPreview.forEach((file: any) =>
+                          imagesPreview.forEach((file: File) =>
                             Object.assign(file, {
                               preview: URL.createObjectURL(file),
                             })

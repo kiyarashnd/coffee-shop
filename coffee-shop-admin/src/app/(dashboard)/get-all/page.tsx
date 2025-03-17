@@ -59,7 +59,9 @@ function GetAllpage() {
     }
   };
 
-  const { data, mutate } = useSWR(`/`, () => Api.GetAllProperties().enq());
+  const { data, mutate } = useSWR(`/api/products`, () =>
+    Api.GetAllProperties().enq()
+  );
 
   const gridRef = useRef<AgGridReact>(null);
 
@@ -69,7 +71,7 @@ function GetAllpage() {
     { field: 'price', headerName: 'قیمت', filter: false },
   ]);
 
-  const [tableData, setTableData] = useState(data);
+  const [tableData, setTableData] = useState();
 
   useEffect(() => {
     setTableData(
@@ -85,18 +87,16 @@ function GetAllpage() {
   }, [data]);
 
   // const onGridReady = useCallback((params: GridReadyEvent) => {
-  //   fetch(`${BASE_URL}/1/50`)
+  //   fetch(`${BASE_URL}/api/products`)
   //     .then((resp) => resp.json())
   //     .then((data: any) =>
   //       setTableData(
-  //         data?.value.items?.map((item: any) => {
+  //         data?.map((item: any) => {
   //           return {
   //             ...item,
-  //             title: item?.title,
-  //             city: item?.city,
-  //             state: item?.state,
+  //             name: item?.name,
   //             price: formatPriceToToman(item?.price),
-  //             documentKind: item?.documentKind?.title,
+  //             description: item?.description,
   //           };
   //         })
   //       )

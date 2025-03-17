@@ -1,5 +1,6 @@
-// app/components/Header.tsx
+// components/Header.tsx
 'use client';
+
 import React, { useState } from 'react';
 import {
   AppBar,
@@ -12,11 +13,14 @@ import {
   ListItem,
   ListItemText,
   Button,
+  Badge,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CoffeeIcon from '@mui/icons-material/Coffee';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCartStore } from '@/store/useCartStore';
 
 const navLinks = [
   { label: 'خانه', href: '/' },
@@ -28,8 +32,19 @@ const navLinks = [
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  // 1) Grab the entire cart from Zustand
+  const cart = useCartStore((state) => state.cart);
+  // 2) Derive total items:
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const router = useRouter();
+
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);
+  };
+
+  const handleCartClick = () => {
+    router.push('/checkout');
   };
 
   const drawerContent = (
@@ -53,13 +68,9 @@ const Header = () => {
 
   return (
     <>
-      <AppBar
-        position='static'
-        sx={{ backgroundColor: '#B0A27B' }}
-        className='shadow-md'
-      >
+      <AppBar position='static' sx={{ backgroundColor: '#B0A27B' }}>
         <Toolbar className='flex justify-between items-center px-4'>
-          {/* Logo and Title */}
+          {/* Logo */}
           <Box className='flex items-center'>
             <CoffeeIcon sx={{ ml: 1 }} />
             <Typography
@@ -71,7 +82,7 @@ const Header = () => {
             </Typography>
           </Box>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Nav */}
           <Box className='hidden sm:flex space-x-4'>
             {navLinks.map((link) => (
               <Link key={link.label} href={link.href} passHref>
@@ -82,10 +93,15 @@ const Header = () => {
             ))}
           </Box>
 
-          {/* Cart Icon and Mobile Menu */}
+          {/* Cart Icon & Mobile Menu */}
           <Box className='flex items-center'>
-            <IconButton className='text-white hover:bg-[#8d6e63]'>
-              <ShoppingCartIcon />
+            <IconButton
+              className='text-white hover:bg-[#8d6e63]'
+              onClick={handleCartClick}
+            >
+              <Badge badgeContent={totalItems} color='error'>
+                <ShoppingCartIcon />
+              </Badge>
             </IconButton>
             <IconButton
               edge='start'

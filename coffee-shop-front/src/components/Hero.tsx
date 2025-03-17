@@ -1,4 +1,5 @@
 // app/components/Hero.tsx
+'use client';
 import React from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import { useRouter } from 'next/navigation';

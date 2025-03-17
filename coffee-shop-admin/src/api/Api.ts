@@ -50,10 +50,30 @@ export namespace Api {
     });
   }
 
+  export function updataProduct(product: any) {
+    const { data, id } = product;
+    const formData2 = new FormData();
+    formData2.append('name', data.name);
+    formData2.append('description', data.description);
+    formData2.append('price', `${data.price}`);
+    data?.image?.forEach((img: File) => {
+      formData2.append('image', img);
+    });
+
+    return new Fetcher<any>(new URL(`${BASE_URL}/api/products/${id}`), {
+      method: 'PUT',
+      body: formData2,
+    });
+  }
+
   export function deleteAdministrators(idProduct: string) {
     return new Fetcher(new URL(`${BASE_URL}/api/products/${idProduct}`), {
       method: 'DELETE',
       // body: JSON.stringify(idProduct),
     });
+  }
+
+  export function signout() {
+    return new Fetcher(new URL(`${BASE_URL}/api/auth/logout`));
   }
 }

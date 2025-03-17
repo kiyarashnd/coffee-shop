@@ -65,7 +65,7 @@ const Footer = () => {
           </div>
           <p>راه های ارتباطی :‌</p>
           <div className=' flex gap-1 mx-auto'>
-            <p className='mt-1'>۰۲۱-۸۳۹۲۹۲۲</p>
+            <p className='mt-1'>09360627237</p>
             <CallIcon />
           </div>
           <div className='flex gap-1 mx-auto'>

@@ -1,5 +1,5 @@
 // app/page.tsx
-'use client';
+// 'use client';
 import React from 'react';
 import Hero from '@/components/Hero';
 import FeaturedCoffees from '@/components/FeaturedCoffees';

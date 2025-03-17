@@ -1,26 +1,9 @@
 // app/layout.tsx
 'use client';
 import React from 'react';
-import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import './globals.css'; // Optional: your global CSS
 import localFont from 'next/font/local';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient();
-
-// Create a custom theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#6d4c41', // A coffee-brown shade
-    },
-    secondary: {
-      main: '#ffab40', // A complementary accent color
-    },
-  },
-});
+import ClientApp from '@/components/ClientApp';
 
 // export const metadata = {
 //   title: 'Coffee Shop Landing',
@@ -54,14 +37,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${dana.variable} bg-[#CCDEE5]`} dir='rtl'>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <QueryClientProvider client={queryClient}>
-            <Header />
-            {children}
-            <Footer />
-          </QueryClientProvider>
-        </ThemeProvider>
+        <ClientApp>{children}</ClientApp>
       </body>
     </html>
   );

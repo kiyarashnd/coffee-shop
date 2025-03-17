@@ -6,9 +6,14 @@ const cors = require('cors');
 // const rateLimit = require('express-rate-limit'); // Prevent brute-force attacks
 const cookieParser = require('cookie-parser');
 
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const connectDB = require('./src/config/db');
 const productRoutes = require('./src/routes/productRoutes');
 const authRoutes = require('./src/routes/authRoutes');
+const otpRoutes = require('./src/routes/otpRoutes');
 
 const app = express();
 
@@ -34,6 +39,7 @@ app.use(cookieParser());
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', otpRoutes);
 
 connectDB();
 const PORT = process.env.PORT || 5000;
