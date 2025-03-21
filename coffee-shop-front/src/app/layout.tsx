@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='en'>
+    <html lang='en' dir='rtl'>
       <body className={`${dana.variable} bg-[#CCDEE5]`} dir='rtl'>
         <ClientApp>{children}</ClientApp>
       </body>

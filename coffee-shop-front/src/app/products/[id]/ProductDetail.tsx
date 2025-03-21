@@ -67,6 +67,7 @@ const ProductDetail: React.FC = () => {
     if (existingItem) {
       // If already in cart, just update the quantity
       updateQuantity(product._id, quantity);
+      alert('قبلا به سبد خرید اضافه شده');
     } else {
       // Otherwise, add a brand-new item
       addToCart({
@@ -116,14 +117,14 @@ const ProductDetail: React.FC = () => {
                 {product.description}
               </Typography>
               <div className='flex items-center gap-4 mb-4'>
-                <TextField
+                {/* <TextField
                   type='number'
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                   inputProps={{ min: 1 }}
                   size='small'
                   className='w-16'
-                />
+                /> */}
                 <Button
                   variant='contained'
                   className='bg-coffee-dark text-white hover:bg-coffee-medium px-8 py-3'

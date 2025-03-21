@@ -45,17 +45,21 @@ export default function CheckoutPage() {
   ];
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }} dir='ltr'>
       {/* استپر بالای صفحه */}
-      <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+      <Stepper
+        activeStep={activeStep}
+        alternativeLabel
+        sx={{ mb: 4 }}
+        dir='ltr'
+      >
         {steps.map((step, index) => (
           <Step key={index}>
-            <StepLabel>{step.label}</StepLabel>
+            <StepLabel dir='rtl'>{step.label}</StepLabel>
           </Step>
         ))}
       </Stepper>
 
-      {/* رندر محتوای هر مرحله بر اساس activeStep */}
       {steps[activeStep].component}
     </Box>
   );
