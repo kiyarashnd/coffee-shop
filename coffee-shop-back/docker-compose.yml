@@ -13,8 +13,12 @@ services:
     #   - '3000:3000'
     environment:
       - PORT=3000
+      - MINIO_ENDPOINT=http://minio:9000 # ✅ تغییر دادم از localhost به minio
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
     depends_on:
       - mongo
+      - minio
   mongo:
     # here mongo is name of service that can be anything
     image: mongo
@@ -36,7 +40,8 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
-    # volumes:
-    #   - minio_data:/data
+    volumes:
+      - minio_data:/data
 volumes:
   mongo-db:
+  minio_data:

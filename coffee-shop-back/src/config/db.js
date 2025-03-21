@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 
+const {
+  MONGO_USER,
+  MONGO_PASSWORD,
+  MONGO_IP,
+  MONGO_PORT,
+} = require('./config');
+
 const connectDB = async () => {
   try {
     // await mongoose.connect(process.env.MONGO_URI, {
