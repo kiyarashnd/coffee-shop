@@ -5,21 +5,21 @@ const {
   MONGO_PASSWORD,
   MONGO_IP,
   MONGO_PORT,
+  MONGO_DB
 } = require('./config');
 
 const connectDB = async () => {
   try {
-    // await mongoose.connect(process.env.MONGO_URI, {
     await mongoose.connect(
-      `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`,
+      `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`,
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       }
     );
-    console.log('MongoDB Connected');
+    console.log(`✅ MongoDB Connected to database: ${MONGO_DB}`);
   } catch (error) {
-    console.error('MongoDB Connection Error:', error);
+    console.error('❌ MongoDB Connection Error:', error);
     process.exit(1);
   }
 };

@@ -1,5 +1,5 @@
 const Product = require('../models/Product');
-const { uploadFile, minioClient, BUCKET_NAME } = require('../config/minio'); // ✅ ایمپورت minioClient
+const { uploadFile, minioClient, BUCKET_NAME } = require('../config/minio');
 
 exports.getProducts = async (req, res) => {
   try {
