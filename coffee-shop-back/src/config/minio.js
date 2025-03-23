@@ -1,8 +1,8 @@
-const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, DeleteObjectCommand, CreateBucketCommand, HeadBucketCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 
 const minioEndpoint = process.env.MINIO_ENDPOINT || 'http://minio:9000';
-const minioPublicUrl = 'http://localhost:9000'; // تغییر برای دسترسی از مرورگر
+const minioPublicUrl = 'http://localhost:9000';
 
 const minioClient = new S3Client({
   endpoint: minioEndpoint,
@@ -16,20 +16,38 @@ const minioClient = new S3Client({
 
 const BUCKET_NAME = process.env.MINIO_BUCKET || 'coffee-shop';
 
-/**
- * آپلود فایل در MinIO
- * @param {Object} file - فایلی که باید آپلود شود
- * @returns {Object} اطلاعات آپلود شده
- */
+async function createBucketIfNotExists() {
+  try {
+    try {
+      await minioClient.send(new HeadBucketCommand({ Bucket: BUCKET_NAME }));
+      console.log(`✅ Bucket '${BUCKET_NAME}' already exists`);
+    } catch (error) {
+      if (error.name === 'NotFound' || error.name === 'NoSuchBucket') {
+        // Create bucket if it doesn't exist
+        await minioClient.send(new CreateBucketCommand({ Bucket: BUCKET_NAME }));
+        console.log(`✅ Bucket '${BUCKET_NAME}' created successfully`);
+      } else {
+        throw error;
+      }
+    }
+  } catch (err) {
+    console.error('❌ Error creating/checking bucket:', err);
+    throw err;
+  }
+}
+
 async function uploadFile(file) {
   try {
-    const uniqueName = `${Date.now()}-${file.originalname}`; // نام یونیک برای فایل
+    // Ensure bucket exists before uploading
+    await createBucketIfNotExists();
+    
+    const uniqueName = `${Date.now()}-${file.originalname}`;
 
     const upload = new Upload({
       client: minioClient,
       params: {
         Bucket: BUCKET_NAME,
-        Key: `products/${uniqueName}`, // ذخیره در فولدر products
+        Key: `products/${uniqueName}`,
         Body: file.buffer,
         ContentType: file.mimetype,
       },
@@ -39,17 +57,13 @@ async function uploadFile(file) {
     const fileUrl = `${minioPublicUrl}/${BUCKET_NAME}/products/${uniqueName}`;
 
     console.log('✅ File uploaded successfully:', fileUrl);
-    return { key: uniqueName, url: fileUrl }; // بازگرداندن URL کامل
+    return { key: uniqueName, url: fileUrl };
   } catch (err) {
     console.error('❌ Error uploading file:', err);
     throw err;
   }
 }
 
-/**
- * حذف فایل از MinIO
- * @param {string} fileKey - نام فایلی که باید حذف شود
- */
 async function removeFile(fileKey) {
   try {
     const command = new DeleteObjectCommand({
@@ -65,4 +79,8 @@ async function removeFile(fileKey) {
   }
 }
 
-module.exports = { minioClient, BUCKET_NAME, uploadFile, removeFile };
+createBucketIfNotExists().catch(err => {
+  console.error('Failed to initialize MinIO bucket:', err);
+});
+
+module.exports = { minioClient, BUCKET_NAME, uploadFile, removeFile, createBucketIfNotExists };

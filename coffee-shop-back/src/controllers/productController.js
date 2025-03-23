@@ -1,12 +1,13 @@
-const Product = require('../models/Product');
-const { uploadFile, minioClient, BUCKET_NAME } = require('../config/minio'); // ✅ ایمپورت minioClient
+const Product = require("../models/Product");
+const { uploadFile, minioClient, BUCKET_NAME } = require('../config/minio');
+
 
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find();
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -17,7 +18,7 @@ exports.addProduct = async (req, res) => {
     if (!name || !price || !req.file) {
       return res
         .status(400)
-        .json({ message: 'Name, price, and image are required' });
+        .json({ message: "Name, price, and image are required" });
     }
 
     const uploadedImage = await uploadFile(req.file);
@@ -33,7 +34,7 @@ exports.addProduct = async (req, res) => {
 
     res.status(201).json(newProduct);
   } catch (error) {
-    console.error('Upload Error:', JSON.stringify(error, null, 2));
+    console.error("Upload Error:", JSON.stringify(error, null, 2));
     res.status(500).json({ message: error });
   }
 };
@@ -43,54 +44,54 @@ exports.deleteProduct = async (req, res) => {
     const productId = req.params.id;
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     // حذف تصویر از MinIO
-    const imageKey = product.image.split('/').slice(-1)[0]; // دریافت نام فایل از URL
+    const imageKey = product.image.split("/").slice(-1)[0]; // دریافت نام فایل از URL
     await minioClient.destroy(BUCKET_NAME, `products/${imageKey}`);
 
     await Product.findByIdAndDelete(productId);
-    res.status(200).json({ message: 'Product deleted successfully' });
+    res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error('Delete Error:', error);
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error("Delete Error:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
 exports.findProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).select(
-      'name price image description'
+      "name price image description"
     );
 
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     res.json(product);
   } catch (error) {
-    console.error('Error fetching product:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Error fetching product:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 exports.updateProduct = async (req, res) => {
   try {
-    console.log('req.body', req.body);
+    console.log("req.body", req.body);
     const { name, price, description } = req.body;
     const productId = req.params.id;
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     // let imageUrl = product.image;
 
     if (req.file) {
       // حذف عکس قدیمی از MinIO
-      const oldImageKey = product.image.split('/').slice(-1)[0];
+      const oldImageKey = product.image.split("/").slice(-1)[0];
       // await minioClient.removeObject(BUCKET_NAME, `products/${oldImageKey}`);
       await minioClient.destroy(BUCKET_NAME, `products/${oldImageKey}`);
 
@@ -107,9 +108,9 @@ exports.updateProduct = async (req, res) => {
     product.image = uploadedImage.url;
 
     await product.save();
-    res.json({ message: 'Product updated successfully', product });
+    res.json({ message: "Product updated successfully", product });
   } catch (error) {
-    console.error('Update Error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Update Error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
