@@ -10,7 +10,6 @@ export default function MainLayout(props: { children: ReactElement }) {
   const logoutHandler = async () => {
     try {
       const res = await Api.signout().enq();
-      console.log('res is : ', res);
       push('/login');
     } catch (error) {
       console.log('error', error);

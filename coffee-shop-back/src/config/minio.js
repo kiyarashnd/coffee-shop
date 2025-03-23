@@ -2,7 +2,7 @@ const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 
 const minioEndpoint = process.env.MINIO_ENDPOINT || 'http://minio:9000';
-const minioPublicUrl = 'http://localhost:9000'; // تغییر برای دسترسی از مرورگر
+const minioPublicUrl = 'http://127.0.0.1:9000'; // تغییر برای دسترسی از مرورگر
 
 const minioClient = new S3Client({
   endpoint: minioEndpoint,

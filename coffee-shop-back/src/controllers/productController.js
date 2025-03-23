@@ -77,7 +77,6 @@ exports.findProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    console.log('req.body', req.body);
     const { name, price, description } = req.body;
     const productId = req.params.id;
 
@@ -101,9 +100,10 @@ exports.updateProduct = async (req, res) => {
 
     const uploadedImage = await uploadFile(req.file);
 
-    product.name = name;
-    product.price = price;
-    product.description = description;
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.description = description || product.description;
+
     product.image = uploadedImage.url;
 
     await product.save();

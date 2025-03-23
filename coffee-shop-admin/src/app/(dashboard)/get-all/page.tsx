@@ -1,20 +1,8 @@
 'use client';
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import GroupRowInnerRenderer from '@/components/table/GroupRowInnerRenderer';
+import React, { useEffect, useRef, useState } from 'react';
 import Table from '@/components/table/Table';
-import {
-  ColDef,
-  GridReadyEvent,
-  RowClassRules,
-  SelectionChangedEvent,
-} from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community';
 import { mdiTrashCanOutline } from '@mdi/js';
 import Icon from '@mdi/react';
 import { AgGridReact } from 'ag-grid-react';
@@ -24,8 +12,6 @@ import useSWR from 'swr';
 import { formatPriceToToman } from '@/utils/FormatPrice';
 import Toast from '@/components/Toast/Toast';
 import { toast } from 'react-toastify';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type RowData = {
   name: string;
@@ -59,7 +45,7 @@ function GetAllpage() {
     }
   };
 
-  const { data, mutate } = useSWR(`/api/products`, () =>
+  const { data, mutate, isLoading } = useSWR(`/api/products`, () =>
     Api.GetAllProperties().enq()
   );
 
@@ -102,6 +88,9 @@ function GetAllpage() {
   //       )
   //     );
   // }, []);
+  if (isLoading) {
+    return <div>is loading...</div>;
+  }
 
   return (
     <div>

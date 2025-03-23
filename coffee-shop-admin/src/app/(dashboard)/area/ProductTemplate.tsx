@@ -71,11 +71,6 @@ const Area = () => {
     mode: 'all',
   });
 
-  const name = watch('name');
-  useEffect(() => {
-    console.log('name is : ', name);
-  }, [name]);
-
   const onSubmit = async (data: FormInterface) => {
     try {
       const formData = new FormData();

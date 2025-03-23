@@ -1,4 +1,4 @@
-version: '3'
+# version: '3'
 services:
   nginx:
     image: nginx:stable-alpine
@@ -28,8 +28,8 @@ services:
     volumes:
       # mongo-db is name that we give to volums
       - mongo-db:/data/db
-  redis:
-    image: redis
+  # redis:
+  #   image: redis
   minio:
     image: quay.io/minio/minio
     container_name: minio
