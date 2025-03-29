@@ -11,6 +11,7 @@ const { createBucketIfNotExists } = require('./src/config/minio');
 const productRoutes = require('./src/routes/productRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const otpRoutes = require('./src/routes/otpRoutes');
+const paymentRoutes = require('./src/routes/paymentRoutes');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(
     ],
   })
 );
+
+app.enable('trust proxy');
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
@@ -39,7 +42,7 @@ app.use(cookieParser());
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', otpRoutes);
-// app.use('/api/payment', require('./src/routes/paymentRoutes'));
+app.use('/api/payment', paymentRoutes);
 
 async function startServer() {
   try {

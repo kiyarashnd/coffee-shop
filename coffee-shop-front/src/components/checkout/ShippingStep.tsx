@@ -8,14 +8,20 @@ import {
   Typography,
   Divider,
   Grid,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
+import { useState } from 'react';
 
 interface ShippingStepProps {
   onNext: () => void;
   onBack: () => void;
 }
 
-// تایپ فرم - هر فیلدی که دارید، اینجا تعریف کنید
+// فیلدهای فرم اطلاعات ارسال
 interface ShippingFormData {
   fullName: string;
   phoneNumber: string;
@@ -25,19 +31,94 @@ interface ShippingFormData {
 }
 
 export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
-  // راه‌اندازی React Hook Form
+  // مدیریت فرم با react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<ShippingFormData>();
 
-  // تابعی که هنگام سابمیت فرم صدا می‌شود
-  const onSubmit: SubmitHandler<ShippingFormData> = (data) => {
-    console.log('Shipping data: ', data);
-    // در اینجا داده‌های فرم را می‌توانید در Zustand ذخیره کنید یا هر کاری که نیاز دارید
-    // سپس به گام بعدی بروید
-    onNext();
+  // استیت‌ها
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+
+  // Modal کنترل
+  const [openModal, setOpenModal] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+
+  // وقتی کاربر فرم ارسال را سابمیت می‌کند
+  const onSubmit: SubmitHandler<ShippingFormData> = async (data) => {
+    try {
+      // اگر OTP قبلاً تأیید شده، مستقیماً به مرحله بعد برو
+      if (isOtpVerified) {
+        onNext();
+        return;
+      }
+
+      // اگر هنوز OTP فرستاده نشده، ارسال کنیم
+      if (!isOtpSent) {
+        const resp = await fetch('http://localhost:3000/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: data.phoneNumber }),
+        });
+
+        if (!resp.ok) {
+          const errData = await resp.json();
+          throw new Error(errData.message || 'Failed to send OTP');
+        }
+        setIsOtpSent(true);
+        setErrorMessage('');
+        // حالا که ارسال شد، مودال را باز می‌کنیم تا کد را بگیرد
+        setOpenModal(true);
+      } else {
+        // اگر OTP ارسال شده ولی تأیید نشده
+        setOpenModal(true);
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
+  };
+
+  // متد تأیید OTP (در Modal)
+  const handleVerifyOtp = async () => {
+    try {
+      const phoneNumber = getValues('phoneNumber');
+      if (!phoneNumber) {
+        setErrorMessage('شماره تلفن وارد نشده است');
+        return;
+      }
+      if (!otpCode) {
+        setErrorMessage('کد OTP را وارد کنید');
+        return;
+      }
+
+      const resp = await fetch('http://localhost:3000/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: phoneNumber, code: otpCode }),
+      });
+      if (!resp.ok) {
+        const errData = await resp.json();
+        throw new Error(errData.message || 'Failed to verify OTP');
+      }
+
+      // اگر موفقیت‌آمیز بود:
+      const result = await resp.json();
+      // اگر نیاز به دسترسی به accessToken دارید:
+      sessionStorage.setItem('accessToken', result.accessToken);
+
+      setIsOtpVerified(true);
+      setErrorMessage('');
+      alert('تأیید شد! شماره موبایل شما تأیید گردید.');
+      onNext();
+      // بستن مودال
+      setOpenModal(false);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
   };
 
   return (
@@ -46,10 +127,14 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
         اطلاعات ارسال
       </Typography>
 
-      {/* جداکننده بالای فرم */}
       <Divider sx={{ mb: 3 }} />
 
-      {/* خودِ فرم: از تابع handleSubmit ریکت هوک فرم استفاده می‌کنیم */}
+      {errorMessage && (
+        <Alert severity='error' sx={{ mb: 2 }}>
+          {errorMessage}
+        </Alert>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -113,10 +198,36 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
             بازگشت
           </Button>
           <Button variant='contained' type='submit'>
-            مرحله بعد
+            {!isOtpSent
+              ? 'ارسال OTP'
+              : isOtpVerified
+              ? 'مرحله بعد'
+              : 'تأیید OTP'}
           </Button>
         </Box>
       </form>
+
+      {/* ========== MODAL for OTP ========== */}
+      <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+        <DialogTitle>کد OTP</DialogTitle>
+        <DialogContent>
+          <Typography>کد ارسال‌شده به تلفن همراه را وارد کنید:</Typography>
+          <TextField
+            label='کد شش رقمی'
+            variant='outlined'
+            fullWidth
+            sx={{ mt: 2 }}
+            value={otpCode}
+            onChange={(e) => setOtpCode(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)}>انصراف</Button>
+          <Button variant='contained' onClick={handleVerifyOtp}>
+            تأیید
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
