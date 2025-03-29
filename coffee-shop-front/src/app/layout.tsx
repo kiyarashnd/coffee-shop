@@ -29,6 +29,12 @@ const dana = localFont({
   variable: '--font-dana',
 });
 
+// const enamadCode = `<img src="https://trustseal.enamad.ir/logo.aspx?id=557535&Code=3zsyewjas6PTF83foIir8JqfDonBWcM6" width="100" height="110"
+
+// onclick="window.open("https://trustseal.enamad.ir/?id=557535&Code=3zsyewjas6PTF83foIir8JqfDonBWcM6", "Popup","toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30")"
+
+// alt="enamad">`;
+
 export default function RootLayout({
   children,
 }: {
@@ -36,6 +42,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' dir='rtl'>
+      {/* <meta name='enamad' content='۵۲۰۰۲۴۲۰' /> */}
+      <meta name='enamad' content='56408236' />
+
       <body className={`${dana.variable} bg-[#CCDEE5]`} dir='rtl'>
         <ClientApp>{children}</ClientApp>
       </body>

@@ -23,6 +23,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import Link from 'next/link';
+import { Box } from '@mui/material';
 
 const Footer = () => {
   return (
@@ -84,6 +85,30 @@ const Footer = () => {
           <YouTubeIcon fontSize='large' />
           <TelegramIcon fontSize='large' />
         </div>
+
+        <Box>
+          <a
+            className='cursor-pointer p-2 lg:p-4 flex items-center justify-center border-complete-200 rounded mr-2'
+            target='_blank'
+            referrerPolicy='origin'
+            href='https://trustseal.enamad.ir/?id=594292&Code=5oWzYqP2g3iq8G2VT9LidDdQ1Jr0T1vd'
+          >
+            <div>
+              <img
+                id='557535'
+                referrerPolicy='origin'
+                className='w-full inline-block'
+                src='https://trustseal.enamad.ir/logo.aspx?id=557535&Code=5oWzYqP2g3iq8G2VT9LidDdQ1Jr0T1vd'
+                width='100'
+                height='110'
+                alt='نماد اعتماد الکترونیک'
+                title='enamad'
+              />
+            </div>
+          </a>
+
+          {/* <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=594292&Code=5oWzYqP2g3iq8G2VT9LidDdQ1Jr0T1vd'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=594292&Code=5oWzYqP2g3iq8G2VT9LidDdQ1Jr0T1vd' alt='' style='cursor:pointer' code='5oWzYqP2g3iq8G2VT9LidDdQ1Jr0T1vd'></a> */}
+        </Box>
       </section>
       {/* </div> */}
     </footer>

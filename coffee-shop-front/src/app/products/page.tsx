@@ -7,6 +7,7 @@ import { Search } from 'lucide-react';
 import { useFetchData } from '@/hooks/useFetchData';
 import { Product } from '@/types/products';
 import { Coffee, Package, ShoppingBag } from 'lucide-react';
+import { formatPriceToToman } from '@/utils/formatPrice';
 
 const Products: React.FC = () => {
   type ProductCategory = 'Coffee' | 'Equipment' | 'Accessories';
@@ -137,7 +138,8 @@ const Products: React.FC = () => {
                   </p>
                   <div className='flex items-center justify-between'>
                     <span className='text-coffee-dark font-semibold'>
-                      ${product.price.toFixed(2)}
+                      {/* ${product.price.toFixed(2)} */}
+                      {formatPriceToToman(product.price)}
                     </span>
                     <span className='text-sm text-coffee-medium underline'>
                       جزئیات محصول

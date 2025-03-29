@@ -16,6 +16,9 @@ services:
         NODE_ENV: production
     volumes:
       - ./.env:/app/.env
+      - ./:/app
+      - /app/node_modules
+    command: npm run dev
     environment:
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
@@ -81,14 +84,14 @@ services:
     depends_on:
       - mongo
 
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    ports:
-      - '8082:8081'
-    environment:
-      - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD}
-    depends_on:
-      - redis
+  # redis-commander:
+  #   image: rediscommander/redis-commander:latest
+  #   ports:
+  #     - '8082:8081'
+  #   environment:
+  #     - REDIS_HOSTS=local:redis:6379:0:${REDIS_PASSWORD}
+  #   depends_on:
+  #     - redis
 
 volumes:
   mongo-db:

@@ -16,5 +16,8 @@ export const useFetchData = (id?: string) => {
   return useQuery({
     queryKey: ['fetchData', id],
     queryFn: () => fetchData(id),
+    // staleTime: 5000,
+    staleTime: 0, // همیشه بلافاصله استیل می‌شود
+    // cacheTime: 0,   // پس از unmount بلافاصله از کش حذف می‌شود
   });
 };

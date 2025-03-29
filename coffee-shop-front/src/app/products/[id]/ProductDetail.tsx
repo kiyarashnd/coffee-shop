@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Grid, Typography, Button, TextField } from '@mui/material';
+import { Grid, Typography, Button } from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import Link from 'next/link';
@@ -9,25 +9,20 @@ import { useParams } from 'next/navigation';
 import Head from 'next/head';
 import { useFetchData } from '@/hooks/useFetchData';
 import { useCartStore } from '@/store/useCartStore';
+import { formatPriceToToman } from '@/utils/formatPrice';
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+// interface CartItem {
+//   id: number;
+//   name: string;
+//   price: number;
+//   quantity: number;
+// }
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const { data, isLoading, error } = useFetchData(id as string);
   const product = data;
 
-  // ----- Zustand cart store -----
-  //   const { cart, addToCart, updateQuantity } = useCartStore((state) => ({
-  //     cart: state.cart,
-  //     addToCart: state.addToCart,
-  //     updateQuantity: state.updateQuantity,
-  //   }));
   const cart = useCartStore((state) => state.cart);
   const addToCart = useCartStore((state) => state.addToCart);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
@@ -36,9 +31,7 @@ const ProductDetail: React.FC = () => {
   const existingItem = cart?.find((item) => item.id === product?._id);
 
   // Local quantity state
-  const [quantity, setQuantity] = useState(
-    existingItem ? existingItem.quantity : 1
-  );
+  const [quantity] = useState(existingItem ? existingItem.quantity : 1);
 
   if (isLoading) return <p>در حال بارگذاری...</p>;
   if (error) return <p>خطا: {error.message}</p>;
@@ -110,7 +103,8 @@ const ProductDetail: React.FC = () => {
                 {product.name}
               </Typography>
               <Typography className='text-2xl font-semibold text-coffee-dark mb-6'>
-                ${product.price.toFixed(2)}
+                {/* ${product.price.toFixed(2)} */}
+                {formatPriceToToman(product.price)}
               </Typography>
               <hr className='my-4 border-gray-200' />
               <Typography className='text-base text-text-secondary mb-8 font-sans'>
