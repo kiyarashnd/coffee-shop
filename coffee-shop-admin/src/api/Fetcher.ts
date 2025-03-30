@@ -39,7 +39,11 @@ export class Fetcher<R, ErrorR = CommonResponse> {
     let response = await fetch(this.input, this.init);
 
     // If the response is unauthorized (401) or forbidden (403), attempt a token refresh.
-    if (response.status === 401 || response.status === 403) {
+    if (
+      response.status === 401 ||
+      response.status === 403 ||
+      response.status === 502
+    ) {
       // If we’re already on the login page, let the error propagate so the login component can display a toast.
       if (
         typeof window !== 'undefined' &&

@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema({
   // کد رهگیری (سفارش) که می‌توانی بر اساس نیاز سفارشی تولید کنی
   trackingCode: {
     type: String,
-    unique: true,
+    // unique: true,
   },
   paymentStatus: {
     type: String,

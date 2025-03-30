@@ -35,7 +35,7 @@ exports.sendOTP = async (req, res) => {
     // بدنه درخواست
     const data = {
       lineNumber: Number(SMSIR_SENDER_NUMBER), // حتماً عدد باشد
-      messageText: `کد ورود شما: ${otpCode}`, // متن پیامک
+      messageText: `کد ثبت سفارش شما به کورش کافی: ${otpCode}`, // متن پیامک
       mobiles: [phone], // آرایه‌ای از شماره‌ها
       sendDateTime: null, // برای ارسال فوری
     };
@@ -103,6 +103,6 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
-// exports.refreshToken = (req, res) => {
-//   // همان منطق قبلی، تغییر نیاز ندارد
-// };
+exports.refreshToken = (req, res) => {
+  // همان منطق قبلی، تغییر نیاز ندارد
+};

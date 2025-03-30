@@ -23,9 +23,10 @@ type Product = {
 export default function CheckoutPage() {
   const [activeStep, setActiveStep] = useState(0);
   const { data, isLoading } = useFetchData();
-  console.log('data is : ', data);
 
   const { cart, removeFromCart } = useCartStore();
+
+  const [phone, setPhone] = useState('');
 
   useEffect(() => {
     if (isLoading || !data) return;
@@ -56,6 +57,8 @@ export default function CheckoutPage() {
         <ShippingStep
           onNext={() => setActiveStep((prev) => prev + 1)}
           onBack={() => setActiveStep((prev) => prev - 1)}
+          phone={phone}
+          setPhone={setPhone}
         />
       ),
     },
@@ -65,6 +68,9 @@ export default function CheckoutPage() {
         <PaymentStep
           onNext={() => setActiveStep((prev) => prev + 1)}
           onBack={() => setActiveStep((prev) => prev - 1)}
+          items={cart}
+          totalAmount={cart.reduce((total, item) => total + item.price, 0)}
+          phone={phone}
         />
       ),
     },

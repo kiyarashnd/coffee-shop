@@ -9,16 +9,18 @@ import {
   Divider,
   Grid,
   Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
 } from '@mui/material';
 import { useState } from 'react';
+import OtpModal from '../OtpModal';
+import { ObjectSchema } from 'yup';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 interface ShippingStepProps {
   onNext: () => void;
   onBack: () => void;
+  phone: string;
+  setPhone: any;
 }
 
 // فیلدهای فرم اطلاعات ارسال
@@ -30,32 +32,72 @@ interface ShippingFormData {
   postalCode: string;
 }
 
-export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
+const formSchema: ObjectSchema<ShippingFormData> = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required('شماره موبایل اجباری است.')
+    .matches(/09[0-3][0-9]-?[0-9]{3}-?[0-9]{4}/, 'فرمت شماره موبایل صحیح نیست.')
+    .max(11, 'شماره موبایل حداکثر ۱۱ کاراکتر است.'),
+  fullName: yup.string().required('نام و نام خانوادگی اجباری است.'),
+  address: yup.string().required('آدرس اجباری است.'),
+  city: yup.string().required('شهر اجباری است.'),
+  postalCode: yup.string().required('کد پستی اجباری است.'),
+});
+
+export default function ShippingStep({
+  onNext,
+  onBack,
+  phone,
+  setPhone,
+}: ShippingStepProps) {
   // مدیریت فرم با react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
-  } = useForm<ShippingFormData>();
+    watch,
+    reset,
+  } = useForm<ShippingFormData>({
+    resolver: yupResolver(formSchema),
+    mode: 'onSubmit',
+  });
+  const phoneNumber = watch('phoneNumber');
 
   // استیت‌ها
   const [errorMessage, setErrorMessage] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  // const [isOtpVerified, setIsOtpVerified] = useState(false);
 
   // Modal کنترل
   const [openModal, setOpenModal] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
+  // const [otpCode] = useState('');
+
+  const handleResend = async () => {
+    // دوباره /api/auth/send-otp ...
+    const resp = await fetch('http://localhost:3000/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phoneNumber }),
+    });
+
+    if (!resp.ok) {
+      const errData = await resp.json();
+      throw new Error(errData.message || 'Failed to send OTP');
+    }
+    setIsOtpSent(true);
+    setErrorMessage('');
+    // حالا که ارسال شد، مودال را باز می‌کنیم تا کد را بگیرد
+    setOpenModal(true);
+  };
 
   // وقتی کاربر فرم ارسال را سابمیت می‌کند
   const onSubmit: SubmitHandler<ShippingFormData> = async (data) => {
     try {
       // اگر OTP قبلاً تأیید شده، مستقیماً به مرحله بعد برو
-      if (isOtpVerified) {
-        onNext();
-        return;
-      }
+      // if (isOtpVerified) {
+      //   onNext();
+      //   return;
+      // }
 
       // اگر هنوز OTP فرستاده نشده، ارسال کنیم
       if (!isOtpSent) {
@@ -73,6 +115,7 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
         setErrorMessage('');
         // حالا که ارسال شد، مودال را باز می‌کنیم تا کد را بگیرد
         setOpenModal(true);
+        setPhone(data.phoneNumber);
       } else {
         // اگر OTP ارسال شده ولی تأیید نشده
         setOpenModal(true);
@@ -83,47 +126,50 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
   };
 
   // متد تأیید OTP (در Modal)
-  const handleVerifyOtp = async () => {
-    try {
-      const phoneNumber = getValues('phoneNumber');
-      if (!phoneNumber) {
-        setErrorMessage('شماره تلفن وارد نشده است');
-        return;
-      }
-      if (!otpCode) {
-        setErrorMessage('کد OTP را وارد کنید');
-        return;
-      }
+  // const handleVerifyOtp = async () => {
+  // try {
+  //   const phoneNumber = getValues('phoneNumber');
+  //   if (!phoneNumber) {
+  //     setErrorMessage('شماره تلفن وارد نشده است');
+  //     return;
+  //   }
+  //   if (!otpCode) {
+  //     setErrorMessage('کد OTP را وارد کنید');
+  //     return;
+  //   }
 
-      const resp = await fetch('http://localhost:3000/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phoneNumber, code: otpCode }),
-      });
-      if (!resp.ok) {
-        const errData = await resp.json();
-        throw new Error(errData.message || 'Failed to verify OTP');
-      }
+  //   const resp = await fetch('http://localhost:3000/api/auth/verify-otp', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({ phone: phoneNumber, code: otpCode }),
+  //   });
+  //   if (!resp.ok) {
+  //     const errData = await resp.json();
+  //     throw new Error(errData.message || 'Failed to verify OTP');
+  //   }
 
-      // اگر موفقیت‌آمیز بود:
-      const result = await resp.json();
-      // اگر نیاز به دسترسی به accessToken دارید:
-      sessionStorage.setItem('accessToken', result.accessToken);
+  //   // اگر موفقیت‌آمیز بود:
+  //   const result = await resp.json();
+  //   // اگر نیاز به دسترسی به accessToken دارید:
+  //   sessionStorage.setItem('accessToken', result.accessToken);
 
-      setIsOtpVerified(true);
-      setErrorMessage('');
-      alert('تأیید شد! شماره موبایل شما تأیید گردید.');
-      onNext();
-      // بستن مودال
-      setOpenModal(false);
-    } catch (error: any) {
-      setErrorMessage(error.message);
-    }
-  };
+  //   setIsOtpVerified(true);
+  //   setErrorMessage('');
+  //   alert('تأیید شد! شماره موبایل شما تأیید گردید.');
+  //   onNext();
+  //   // بستن مودال
+  //   setOpenModal(false);
+  // } catch (error: any) {
+  //   setErrorMessage(error.message);
+  // }
+  // };
 
   return (
     <Box>
-      <Typography variant='h6' sx={{ mb: 2, fontWeight: 'bold' }}>
+      <Typography
+        variant='h6'
+        sx={{ mb: 2, fontWeight: 'bold', justifyContent: 'center' }}
+      >
         اطلاعات ارسال
       </Typography>
 
@@ -198,16 +244,12 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
             بازگشت
           </Button>
           <Button variant='contained' type='submit'>
-            {!isOtpSent
-              ? 'ارسال OTP'
-              : isOtpVerified
-              ? 'مرحله بعد'
-              : 'تأیید OTP'}
+            {!isOtpSent ? 'ارسال OTP' : 'تأیید OTP'}
           </Button>
         </Box>
       </form>
 
-      {/* ========== MODAL for OTP ========== */}
+      {/* ========== MODAL for OTP ==========
       <Dialog open={openModal} onClose={() => setOpenModal(false)}>
         <DialogTitle>کد OTP</DialogTitle>
         <DialogContent>
@@ -222,12 +264,31 @@ export default function ShippingStep({ onNext, onBack }: ShippingStepProps) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenModal(false)}>انصراف</Button>
+          <Button
+            onClick={() => {
+              setOpenModal(false);
+              reset();
+            }}
+          >
+            انصراف
+          </Button>
           <Button variant='contained' onClick={handleVerifyOtp}>
             تأیید
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
+
+      <OtpModal
+        open={openModal}
+        onClose={() => {
+          reset();
+          setOpenModal(false);
+        }}
+        // onVerify={handleVerifyOtp}
+        onNext={onNext}
+        onResend={handleResend}
+        phoneNumber={phoneNumber}
+      />
     </Box>
   );
 }

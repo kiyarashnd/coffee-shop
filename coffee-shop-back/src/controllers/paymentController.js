@@ -1,141 +1,124 @@
 // controllers/paymentController.js
-const ZarinPal = require('../lib/zarinpal'); // یا هر جایی که فایل zarinpal.js رو گذاشتی
-const Order = require('../models/Order');
+const ZarinPal = require('../lib/zarinpal'); // یا فایلی که کتابخانه خودتان را دارد
+const Order = require('../models/Order'); // اگر دارید
+const dotenv = require('dotenv');
+dotenv.config();
 
-const MERCHANT_ID = process.env.ZARINPAL_MERCHANT_ID;
+const MERCHANT_ID = process.env.ZARINPAL_MERCHANT_ID; // 36 کاراکتری
 const SANDBOX = process.env.ZARINPAL_SANDBOX === 'true';
-// بالاخره یا 'true' یا 'false' در env تنظیم می‌کنید
-const CURRENCY = 'IRT'; // می‌توانید IRR بگذارید اما IRT هم قابل قبول است
+const CURRENCY = 'IRT'; // می‌تواند IRR یا IRT باشد (در سندباکس معمولاً IRT)
 
-// instance:
 const zarinpal = ZarinPal.create(MERCHANT_ID, SANDBOX, CURRENCY);
 
-// ۱) ایجاد سفارش و هدایت به درگاه
 exports.createPayment = async (req, res) => {
   try {
-    /*
-      از فرانت‌:
-      - لیست محصولات (items)
-      - شماره تلفن (phone) -- البته اینجا فرض می‌کنیم قبلا OTP رو تأیید کرده.
-      - آدرس ارسال
-      - جمع مبلغ سبد (totalAmount)
-
-      (نکته: بهتر است backend هم قیمت محصولات را بررسی کند که دستکاری نشده باشد.)
-    */
-    const { phone, items, shippingAddress, totalAmount } = req.body;
-
-    if (!phone || !items || !items.length || !totalAmount) {
-      return res.status(400).json({
-        message: 'اطلاعات سفارش ناقص است',
-      });
-    }
-
-    // ساخت سفارش در حالت pending
-    // ساخت trackingCode دلخواه (مثلا یک uuid یا ...)
+    // ممکن است از طریق توکن در req.user هم داشته باشیم.
+    // اگر از Phone استفاده کردید، آن را از req.user بخوانید
+    // const userPhone = req.user?.phone;
+    // فرانت در body اطلاعاتی مثل سبد و مبلغ را می‌فرستد
+    // const { items, totalAmount } = req.body;
+    const { items, totalAmount, phone } = req.body;
     const trackingCode = Date.now() + '-' + Math.floor(Math.random() * 99999);
 
-    const newOrder = await Order.create({
+    // 1) ساخت سفارش در دیتابیس (در حالت pending) - اختیاری
+    const order = await Order.create({
       phone,
       items,
       totalAmount,
-      shippingAddress,
       trackingCode,
       paymentStatus: 'pending',
     });
 
-    // درخواست زرین‌پال:
-    // مبلغ بر اساس تومان اگر واحد IRT گذاشتید
-    // و اگر IRR بود، باید مبلغ را *10 یا *100 کنید (بسته به نحوه محاسبه)
-    // CallbackURL آدرسی است که زرین پال بعد از پرداخت به آن برمی‌گردد
-    // آن را در env ذخیره کنید مثل: http://localhost:3000/api/payment/verify
+    // 2) فراخوانی متد PaymentRequest از زرین‌پال
     const paymentRequest = await zarinpal.PaymentRequest({
-      Amount: totalAmount, // مبلغ به تومان
+      Amount: totalAmount,
       CallbackURL: process.env.ZARINPAL_CALLBACK_URL,
       Description: 'خرید محصولات کافی‌شاپ',
-      Email: '',
       Mobile: phone,
     });
 
     if (paymentRequest.status === 100) {
-      // Authority برگشتی زرین‌پال را در سفارش ذخیره می‌کنیم
-      newOrder.zarinpalAuthority = paymentRequest.authority;
-      await newOrder.save();
+      // ذخیره Authority در سفارش
+      order.zarinpalAuthority = paymentRequest.authority;
+      await order.save();
 
-      // به فرانت آدرس درگاه زرین‌پال را می‌دهیم که ریدایرکت کند:
+      // برگرداندن paymentUrl به فرانت
       return res.json({
         success: true,
         paymentUrl: paymentRequest.url,
-        orderId: newOrder._id,
-        trackingCode: newOrder.trackingCode,
+        orderId: order._id,
       });
     } else {
       return res.status(400).json({
         success: false,
-        message: 'خطا در ایجاد درخواست پرداخت زرین‌پال',
+        message: 'در ساخت درخواست پرداخت زرین‌پال مشکلی رخ داد',
       });
     }
   } catch (error) {
-    console.error('Error in createPayment:', error);
-    res.status(500).json({
+    console.error('Payment Error => ', error);
+    return res.status(500).json({
       success: false,
-      message: 'خطای سرور',
+      message: 'خطای سرور در ساخت پرداخت',
+      error,
     });
   }
 };
 
-// ۲) کال‌بک پس از پرداخت و وریفای آن
 exports.verifyPayment = async (req, res) => {
   try {
-    // زرین پال معمولا Authority و Status را برمی‌گرداند
+    // زرین‌پال معمولا Authority و Status را به صورت query برمی‌گرداند
     const { Authority, Status } = req.query;
 
-    if (!Authority) {
-      return res.status(400).json({ message: 'Authority not found' });
-    }
-
-    // سفارشی که قبلا برایش Authority ثبت کردیم را بیابید
+    // 1) جستجوی سفارش مربوطه
     const order = await Order.findOne({ zarinpalAuthority: Authority });
     if (!order) {
-      return res.status(404).json({ message: 'سفارش یافت نشد' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'سفارش یافت نشد' });
     }
 
     if (Status !== 'OK') {
-      // یعنی پرداخت موفق نبوده
-      order.paymentStatus = 'failed';
+      // یعنی کاربر پرداخت را کنسل کرده یا خطا خورده
+      order.paymentStatus = 'canceled';
       await order.save();
-      // می‌توانید ریدایرکت کنید به یک صفحه فرانت مخصوص "پرداخت ناموفق"
+      // می‌توانید او را به صفحه "پرداخت ناموفق" در فرانت هدایت کنید
       return res.redirect(
-        process.env.PAYMENT_FAILED_URL || 'http://localhost:3000/payment-fail'
+        process.env.PAYMENT_FAILED_URL ||
+          'http://localhost:3000/chekout/payment-fail'
       );
     }
 
-    // پرداخت موفق است، حالا در زرین‌پال وریفای کنیم
+    // 2) وریفای پرداخت موفق
     const verification = await zarinpal.PaymentVerification({
-      Amount: order.totalAmount, // تومان
+      Amount: order.totalAmount,
       Authority,
     });
 
     if (verification.status === 100) {
       // پرداخت تایید شد
       order.paymentStatus = 'paid';
-      order.refId = verification.refId; // ذخیره کد پیگیری بانکی
+      order.refId = verification.refId;
       await order.save();
-      // هدایت کاربر به صفحه موفقیت پرداخت
+      // هدایت به صفحه موفق در فرانت
       return res.redirect(
         process.env.PAYMENT_SUCCESS_URL ||
-          'http://localhost:3000/payment-success'
+          'http://localhost:3000/checkout/payment-success'
       );
     } else {
-      // خطا در تایید نهایی
+      // خطا در وریفای
       order.paymentStatus = 'failed';
       await order.save();
-      // هدایت کاربر به صفحه شکست پرداخت
       return res.redirect(
-        process.env.PAYMENT_FAILED_URL || 'http://localhost:3000/payment-fail'
+        process.env.PAYMENT_FAILED_URL ||
+          'http://localhost:3000/checkout/payment-fail'
       );
     }
   } catch (error) {
-    console.error('Error in verifyPayment:', error);
-    return res.status(500).json({ message: 'خطای سرور' });
+    console.error('Verify Error => ', error);
+    return res.status(500).json({
+      success: false,
+      message: 'خطای سرور در وریفای پرداخت',
+      error,
+    });
   }
 };

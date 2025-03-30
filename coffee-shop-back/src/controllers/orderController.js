@@ -34,3 +34,13 @@ exports.getMyOrders = async (req, res) => {
     res.status(500).json({ success: false, message: 'خطای سرور' });
   }
 };
+
+// controllers/adminController.js
+exports.getPaidOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ paymentStatus: 'paid' });
+    res.json({ success: true, orders });
+  } catch (error) {
+    res.status(500).json({ success: false, error });
+  }
+};
