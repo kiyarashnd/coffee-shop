@@ -4,6 +4,7 @@ import React from 'react';
 import './globals.css'; // Optional: your global CSS
 import localFont from 'next/font/local';
 import ClientApp from '@/components/ClientApp';
+import { Providers } from '../../src/Providers';
 
 // export const metadata = {
 //   title: 'Coffee Shop Landing',
@@ -46,7 +47,9 @@ export default function RootLayout({
       <meta name='enamad' content='56408236' />
 
       <body className={`${dana.variable} bg-[#CCDEE5]`} dir='rtl'>
-        <ClientApp>{children}</ClientApp>
+        <Providers>
+          <ClientApp>{children}</ClientApp>
+        </Providers>
       </body>
     </html>
   );

@@ -47,7 +47,6 @@ const formSchema: ObjectSchema<ShippingFormData> = yup.object().shape({
 export default function ShippingStep({
   onNext,
   onBack,
-  phone,
   setPhone,
 }: ShippingStepProps) {
   // مدیریت فرم با react-hook-form

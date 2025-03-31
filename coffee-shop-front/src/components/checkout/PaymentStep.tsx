@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Button, Typography, Alert } from '@mui/material';
-import { Product } from '@/types/products';
 
 interface PaymentStepProps {
   onBack: () => void;
@@ -14,7 +13,6 @@ interface PaymentStepProps {
 
 export default function PaymentStep({
   onBack,
-  onNext,
   items,
   totalAmount,
   phone,

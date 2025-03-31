@@ -9,7 +9,6 @@ import {
   Typography,
   Button,
   Box,
-  TextField,
 } from '@mui/material';
 import OtpInput from 'react-otp-input';
 
@@ -65,13 +64,6 @@ export default function OtpModal({
       setErrorMessage('لطفاً همه ارقام کد را وارد کنید');
       return;
     }
-    // try {
-    //   setErrorMessage('');
-    //   await onVerify(otpValue);
-    //   onClose(); // پس از موفقیت می‌توانید مودال را ببندید یا کاری دیگر
-    // } catch (err: { message: string } | any) {
-    //   setErrorMessage(err?.message || 'خطا در تأیید کد');
-    // }
 
     try {
       if (!phoneNumber) {
@@ -142,25 +134,6 @@ export default function OtpModal({
                 {errorMessage}
               </Typography>
             )}
-
-            {/* این کامپوننت نامش MuiOtpInput است و از کتابخانه mui-one-time-password-input */}
-            {/* <MuiOtpInput
-              length={length}
-              value={otpValue}
-              onChange={(value: string) => setOtpValue(value)}
-              TextFieldsProps={{
-                // این props به همه TextFieldهای داخلی اعمال می‌شود
-                // می‌توانید سایز، variant و غیره را سفارشی کنید
-                variant: 'outlined',
-                size: 'small',
-                sx: { width: 50, marginRight: 1 }, // استایل هر فیلد
-              }}
-              dir='ltr'
-              // اگر فقط اعداد مجاز باشند
-              validateChar={(char: string) => /[0-9]/.test(char)}
-              autoFocus
-              // onComplete={(val) => console.log("کد تکمیل شد: ", val)}
-            /> */}
 
             <OtpInput
               value={otpValue}
