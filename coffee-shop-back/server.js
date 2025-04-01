@@ -5,7 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const connectDB = require('./src/config/db');
-const connectRedis = require('./src/config/redis');
+// const connectRedis = require('./src/config/redis');
 const { createBucketIfNotExists } = require('./src/config/minio');
 
 const productRoutes = require('./src/routes/productRoutes');
@@ -47,7 +47,7 @@ app.use('/api/payment', paymentRoutes);
 async function startServer() {
   try {
     await connectDB();
-    await connectRedis();
+    // await connectRedis();
     await createBucketIfNotExists();
 
     const PORT = process.env.PORT || 5000;

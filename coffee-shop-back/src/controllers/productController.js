@@ -1,9 +1,33 @@
 const Product = require('../models/Product');
 const { uploadFile, minioClient, BUCKET_NAME } = require('../config/minio');
 
+// exports.getProducts = async (req, res) => {
+//   try {
+//     const products = await Product.find();
+//     res.status(200).json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Server Error' });
+//   }
+// };
+
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const filter = {};
+
+    // فیلتر بر اساس دسته‌بندی
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
+    // فیلتر بر اساس جستجو (در نام یا توضیحات)
+    if (req.query.search) {
+      filter.$or = [
+        { name: { $regex: req.query.search, $options: 'i' } },
+        { description: { $regex: req.query.search, $options: 'i' } },
+      ];
+    }
+
+    const products = await Product.find(filter);
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
@@ -12,12 +36,13 @@ exports.getProducts = async (req, res) => {
 
 exports.addProduct = async (req, res) => {
   try {
-    const { name, price, description } = req.body;
+    const { name, price, description, category } = req.body;
+    console.log(req.body);
 
-    if (!name || !price || !req.file) {
+    if (!name || !price || !req.file || !category) {
       return res
         .status(400)
-        .json({ message: 'Name, price, and image are required' });
+        .json({ message: 'Name, price,category, and image are required' });
     }
 
     const uploadedImage = await uploadFile(req.file);
@@ -27,6 +52,7 @@ exports.addProduct = async (req, res) => {
       price,
       description,
       image: uploadedImage.url, // Store full image URL
+      category,
     });
 
     await newProduct.save();
@@ -61,7 +87,7 @@ exports.deleteProduct = async (req, res) => {
 exports.findProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).select(
-      'name price image description'
+      'name price image category description'
     );
 
     if (!product) {
@@ -75,41 +101,73 @@ exports.findProductById = async (req, res) => {
   }
 };
 
-exports.updateProduct = async (req, res) => {
-  try {
-    const { name, price, description } = req.body;
-    const productId = req.params.id;
+// exports.updateProduct = async (req, res) => {
+//   try {
+//     const { name, price, description, category } = req.body;
+//     const productId = req.params.id;
 
-    const product = await Product.findById(productId);
-    if (!product) {
+//     const product = await Product.findById(productId);
+//     if (!product) {
+//       return res.status(404).json({ message: 'Product not found' });
+//     }
+
+//     // فقط اگر فایل جدید ارسال شده باشد، عملیات آپلود و حذف انجام شود
+//     if (req.file) {
+//       // حذف عکس قدیمی از MinIO
+//       const oldImageKey = product.image.split('/').slice(-1)[0];
+//       await minioClient.destroy(BUCKET_NAME, `products/${oldImageKey}`);
+
+//       // آپلود عکس جدید
+//       const uploadedImage = await uploadFile(req.file);
+//       product.image = uploadedImage.url;
+//     }
+
+//     // به‌روزرسانی فیلدهای دیگر
+//     product.name = name || product.name;
+//     product.price = price || product.price;
+//     product.description = description || product.description;
+//     if (category) {
+//       product.category = category;
+//     }
+
+//     await product.save();
+//     res.json({ message: 'Product updated successfully', product });
+//   } catch (error) {
+//     console.error('Update Error:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+exports.patchProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const updateData = req.body; // فقط فیلدهای تغییر یافته
+    // اگر فایل جدیدی آپلود شده، می‌توانید آن را به updateData اضافه کنید.
+
+    console.log('req.file is : ', req.file);
+    if (req.file) {
+      // عملیات حذف تصویر قدیمی و آپلود تصویر جدید
+      const product = await Product.findById(productId);
+      const oldImageKey = product.image.split('/').slice(-1)[0];
+      await minioClient.destroy(BUCKET_NAME, `products/${oldImageKey}`);
+      const uploadedImage = await uploadFile(req.file);
+      updateData.image = uploadedImage.url;
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+    if (!updatedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
-
-    // let imageUrl = product.image;
-
-    if (req.file) {
-      // حذف عکس قدیمی از MinIO
-      const oldImageKey = product.image.split('/').slice(-1)[0];
-      // await minioClient.removeObject(BUCKET_NAME, `products/${oldImageKey}`);
-      await minioClient.destroy(BUCKET_NAME, `products/${oldImageKey}`);
-
-      // آپلود عکس جدید
-      const uploadedImage = await uploadFile(req.file);
-      imageUrl = uploadedImage.url;
-    }
-
-    const uploadedImage = await uploadFile(req.file);
-
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.description = description || product.description;
-
-    product.image = uploadedImage.url;
-
-    await product.save();
-    res.json({ message: 'Product updated successfully', product });
+    res.json({
+      message: 'Product updated successfully',
+      product: updatedProduct,
+    });
   } catch (error) {
-    console.error('Update Error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Patch Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

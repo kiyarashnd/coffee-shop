@@ -1,9 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Grid, Typography, Button } from '@mui/material';
+import {
+  Grid,
+  Typography,
+  Button,
+  Chip,
+  Divider,
+  Breadcrumbs,
+} from '@mui/material';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
+import CategoryIcon from '@mui/icons-material/Category';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Head from 'next/head';
@@ -11,14 +19,14 @@ import { useFetchData } from '@/hooks/useFetchData';
 import { useCartStore } from '@/store/useCartStore';
 import { formatPriceToToman } from '@/utils/formatPrice';
 
-// interface CartItem {
-//   id: number;
-//   name: string;
-//   price: number;
-//   quantity: number;
-// }
-
 const ProductDetail: React.FC = () => {
+  const categoryOptions = ['قهوه', 'تجهیزات', 'دستگاه ها', 'سایر'];
+  //   { value: 'قهوه', label: 'قهوه' },
+  //   { value: 'تجهیزات', label: 'تجهیزات' },
+  //   { value: 'دستگاه ها', label: 'دستگاه ها' },
+  //   { value: 'سایر', label: 'سایر' },
+  // ];
+
   const { id } = useParams();
   const { data, isLoading, error } = useFetchData(id as string);
   const product = data;
@@ -26,15 +34,12 @@ const ProductDetail: React.FC = () => {
   const cart = useCartStore((state) => state.cart);
   const addToCart = useCartStore((state) => state.addToCart);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
-
-  // Find existing item in cart (if any)
   const existingItem = cart?.find((item) => item.id === product?._id);
-
-  // Local quantity state
   const [quantity] = useState(existingItem ? existingItem.quantity : 1);
 
-  if (isLoading) return <p>در حال بارگذاری...</p>;
-  if (error) return <p>خطا: {error.message}</p>;
+  if (isLoading) return <p className='text-center py-10'>در حال بارگذاری...</p>;
+  if (error)
+    return <p className='text-center text-red-500'>خطا: {error.message}</p>;
   if (!product) {
     return (
       <div className='container mx-auto px-6 py-24 text-center'>
@@ -55,14 +60,11 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  // Handler for adding/updating the cart item
   const handleAddToCart = () => {
     if (existingItem) {
-      // If already in cart, just update the quantity
       updateQuantity(product._id, quantity);
-      alert('قبلا به سبد خرید اضافه شده');
+      alert('قبلاً به سبد خرید اضافه شده');
     } else {
-      // Otherwise, add a brand-new item
       addToCart({
         id: product._id,
         name: product.name,
@@ -73,66 +75,97 @@ const ProductDetail: React.FC = () => {
   };
 
   return (
-    <>
-      <div className='container mx-auto px-6 py-24'>
-        <Link
-          href='/products'
-          className='flex justify-end items-center mb-8 text-coffee-medium hover:underline'
-        >
-          <ArrowBack fontSize='small' className='mr-2' />
-          همه محصولات
-        </Link>
+    <div className='container mx-auto px-4 md:px-8 py-10'>
+      <Head>
+        <title>{product.name} | قهوه‌فروشی</title>
+      </Head>
 
-        <Grid container spacing={4} className='animate-fadeIn'>
-          <Grid item xs={12} md={6}>
-            <div className='overflow-hidden rounded-lg shadow-md'>
-              <img
-                src={product.image}
-                alt={product.name}
-                className='w-full h-[400px] object-cover hover:scale-105 transition-transform duration-500'
-              />
-            </div>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <div className='p-6 bg-white rounded-lg shadow-md'>
-              <Typography className='text-base text-coffee-medium font-semibold'>
-                {product?.category}
-              </Typography>
-              <Typography className='text-3xl md:text-4xl font-serif font-bold mt-2 mb-4 text-text-primary'>
-                {product.name}
-              </Typography>
-              <Typography className='text-2xl font-semibold text-coffee-dark mb-6'>
-                {/* ${product.price.toFixed(2)} */}
-                {formatPriceToToman(product.price)}
-              </Typography>
-              <hr className='my-4 border-gray-200' />
-              <Typography className='text-base text-text-secondary mb-8 font-sans'>
-                {product.description}
-              </Typography>
-              <div className='flex items-center gap-4 mb-4'>
-                {/* <TextField
-                  type='number'
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  inputProps={{ min: 1 }}
-                  size='small'
-                  className='w-16'
-                /> */}
-                <Button
-                  variant='contained'
-                  className='bg-coffee-dark text-white hover:bg-coffee-medium px-8 py-3'
-                  startIcon={<ShoppingCart />}
-                  onClick={handleAddToCart}
-                >
-                  <p className='mx-2'>افزودن به سبد خرید</p>
-                </Button>
-              </div>
-            </div>
-          </Grid>
-        </Grid>
+      <div className='flex justify-between items-center mb-4'>
+        <Breadcrumbs aria-label='breadcrumb'>
+          <Link href='/' className='text-sm text-gray-500 hover:underline'>
+            خانه
+          </Link>
+          <Link
+            href='/products'
+            className='text-sm text-gray-500 hover:underline'
+          >
+            محصولات
+          </Link>
+          <Typography color='text.primary' className='text-sm'>
+            {product.name}
+          </Typography>
+        </Breadcrumbs>
       </div>
-    </>
+
+      <Grid container spacing={4} dir='ltr'>
+        <Grid item xs={12} md={6}>
+          <div className='overflow-hidden rounded-xl shadow-md'>
+            <img
+              src={product.image}
+              alt={product.name}
+              className='w-full h-[400px] object-cover hover:scale-105 transition-transform duration-500'
+            />
+          </div>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <div className='p-6 bg-white rounded-xl shadow-lg'>
+            <Chip
+              icon={<CategoryIcon />}
+              label={product.category}
+              className='mb-4 font-sans bg-coffee-light text-coffee-dark'
+            />
+            <Typography
+              variant='h4'
+              className='font-serif text-text-primary mb-3'
+            >
+              {product.name}
+            </Typography>
+            <Typography
+              variant='h5'
+              className='text-coffee-dark font-bold mb-4'
+            >
+              {formatPriceToToman(product.price)}
+            </Typography>
+
+            <Divider className='my-4' />
+
+            <Typography className='text-base text-gray-600 leading-loose mb-6 font-sans'>
+              {product.description}
+            </Typography>
+
+            <Button
+              variant='contained'
+              color='primary'
+              className='bg-coffee-dark hover:bg-coffee-medium px-6 py-2 text-white shadow'
+              startIcon={<ShoppingCart />}
+              onClick={handleAddToCart}
+            >
+              افزودن به سبد خرید
+            </Button>
+          </div>
+        </Grid>
+      </Grid>
+
+      {/* ✅ نمایش دسته‌های مرتبط (اگر بیشتر از یک دسته دارید) */}
+      {/* {product.tags?.length > 0 && ( */}
+      <div className='mt-12'>
+        <Typography variant='h6' className='mb-4 font-bold text-coffee-dark'>
+          دسته‌بندی‌های مرتبط
+        </Typography>
+        <div className='flex flex-wrap gap-2'>
+          {categoryOptions.map((tag: string) => (
+            <Chip
+              key={tag}
+              label={tag}
+              variant='outlined'
+              className='text-sm text-coffee-medium border-coffee-medium'
+            />
+          ))}
+        </div>
+      </div>
+      {/* )} */}
+    </div>
   );
 };
 

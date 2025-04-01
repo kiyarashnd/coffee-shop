@@ -25,7 +25,6 @@ const orderSchema = new mongoose.Schema({
     postalCode: String,
     // فیلدهای دیگر در صورت نیاز...
   },
-  // کد رهگیری (سفارش) که می‌توانی بر اساس نیاز سفارشی تولید کنی
   trackingCode: {
     type: String,
     // unique: true,
@@ -41,7 +40,6 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  // هر فیلد دلخواه دیگر...
 });
 
 module.exports = mongoose.model('Order', orderSchema);

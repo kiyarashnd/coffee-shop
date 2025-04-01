@@ -55,6 +55,7 @@ function GetAllpage() {
     { field: 'name', headerName: 'عنوان', filter: false },
     { field: 'description', headerName: 'توضیحات', filter: false },
     { field: 'price', headerName: 'قیمت', filter: false },
+    { field: 'category', headerName: 'دسته بندی', filter: false },
   ]);
 
   const [tableData, setTableData] = useState();
@@ -67,6 +68,7 @@ function GetAllpage() {
           city: item?.city,
           price: formatPriceToToman(item?.price),
           description: item?.description,
+          category: item?.category,
         };
       })
     );

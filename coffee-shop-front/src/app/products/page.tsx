@@ -3,40 +3,47 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
-// import { categories, products, ProductCategory } from '../data/products';
 import { useFetchData } from '@/hooks/useFetchData';
 import { Product } from '@/types/products';
 import { Coffee, Package, ShoppingBag } from 'lucide-react';
 import { formatPriceToToman } from '@/utils/formatPrice';
 
 const Products: React.FC = () => {
-  type ProductCategory = 'Coffee' | 'Equipment' | 'Accessories';
+  type ProductCategory = 'قهوه' | 'تجهیزات' | 'دستگاه ها' | 'سایر';
+
+  // const categories: { name: ProductCategory; icon: React.FC<{ size?: number }> }[] = [
+  //   { name: 'قهوه', icon: Coffee },
+  //   { name: 'تجهیزات', icon: Package },
+  //   { name: 'دستگاه ها', icon: ShoppingBag },
+  //   { name: 'سایر', icon: ShoppingBag },
+  // ];
 
   const categories = [
     { name: 'قهوه' as ProductCategory, icon: Coffee },
     { name: 'تجهیزات' as ProductCategory, icon: Package },
     { name: 'دستگاه ها' as ProductCategory, icon: ShoppingBag },
+    { name: 'سایر' as ProductCategory, icon: ShoppingBag },
   ];
 
   const { data, isLoading, error } = useFetchData();
-
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<ProductCategory | 'همه'>(
     'همه'
   );
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(data);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
+    if (!data) return;
     let result = data as Product[];
 
-    // Apply category filter
+    // فیلتر بر اساس دسته‌بندی
     if (activeCategory !== 'همه') {
       result = result.filter(
         (product: Product) => product.category === activeCategory
       );
     }
 
-    // Apply search filter
+    // فیلتر بر اساس جستجو (در نام یا توضیحات)
     if (searchTerm) {
       const lowercasedSearch = searchTerm.toLowerCase();
       result = result.filter(
@@ -47,7 +54,7 @@ const Products: React.FC = () => {
     }
 
     setFilteredProducts(result);
-  }, [searchTerm, activeCategory]);
+  }, [data, searchTerm, activeCategory]);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -108,21 +115,21 @@ const Products: React.FC = () => {
         {filteredProducts?.length === 0 ? (
           <div className='text-center py-12'>
             <p className='text-xl text-gray-500'>
-              محصول مورد نظر یافت نشد دوباره جستجو کن!
+              محصول مورد نظر یافت نشد، دوباره جستجو کن!
             </p>
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {data?.map((product: Product) => (
+            {filteredProducts.map((product: Product) => (
               <Link
-                href={`/products/${product?._id}`}
-                key={product?._id}
+                href={`/products/${product._id}`}
+                key={product._id}
                 className='group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow'
               >
                 <div className='relative overflow-hidden'>
                   <img
-                    src={product?.image}
-                    alt={product?.name}
+                    src={product.image}
+                    alt={product.name}
                     width={400}
                     height={400}
                     className='w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-300'
@@ -131,14 +138,11 @@ const Products: React.FC = () => {
                 </div>
                 <div className='p-6'>
                   <h3 className='text-xl font-serif font-semibold text-text-primary mb-2'>
-                    {product?.name}
+                    {product.name}
                   </h3>
-                  <p className='text-text-secondary mb-4'>
-                    {product?.category}
-                  </p>
+                  <p className='text-text-secondary mb-4'>{product.category}</p>
                   <div className='flex items-center justify-between'>
                     <span className='text-coffee-dark font-semibold'>
-                      {/* ${product.price.toFixed(2)} */}
                       {formatPriceToToman(product.price)}
                     </span>
                     <span className='text-sm text-coffee-medium underline'>

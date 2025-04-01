@@ -12,11 +12,6 @@ const zarinpal = ZarinPal.create(MERCHANT_ID, SANDBOX, CURRENCY);
 
 exports.createPayment = async (req, res) => {
   try {
-    // ممکن است از طریق توکن در req.user هم داشته باشیم.
-    // اگر از Phone استفاده کردید، آن را از req.user بخوانید
-    // const userPhone = req.user?.phone;
-    // فرانت در body اطلاعاتی مثل سبد و مبلغ را می‌فرستد
-    // const { items, totalAmount } = req.body;
     const { items, totalAmount, phone } = req.body;
     const trackingCode = Date.now() + '-' + Math.floor(Math.random() * 99999);
 
@@ -38,7 +33,6 @@ exports.createPayment = async (req, res) => {
     });
 
     if (paymentRequest.status === 100) {
-      // ذخیره Authority در سفارش
       order.zarinpalAuthority = paymentRequest.authority;
       await order.save();
 

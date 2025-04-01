@@ -5,7 +5,11 @@ const ProductSchema = new mongoose.Schema({
   price: Number,
   description: String,
   image: String, // لینک تصویر در Cloudinary
-  // imagePublicId: String, // برای حذف تصویر از Cloudinary
+  category: {
+    type: String,
+    enum: ['قهوه', 'تجهیزات', 'دستگاه ها', 'سایر'],
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('Product', ProductSchema);

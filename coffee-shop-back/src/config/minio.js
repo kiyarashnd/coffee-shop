@@ -110,24 +110,6 @@ async function uploadFile(file) {
   }
 }
 
-/**
- * حذف فایل از MinIO
- */
-async function removeFile(fileKey) {
-  try {
-    const command = new DeleteObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: `products/${fileKey}`,
-    });
-
-    await minioClient.send(command);
-    console.log(`✅ File deleted successfully: ${fileKey}`);
-  } catch (err) {
-    console.error('❌ Error deleting file:', err);
-    throw err;
-  }
-}
-
 // در لحظه شروع، بررسی/ایجاد باکت و تنظیم Policy
 createBucketIfNotExists().catch((err) => {
   console.error('Failed to initialize MinIO bucket:', err);
@@ -137,6 +119,5 @@ module.exports = {
   minioClient,
   BUCKET_NAME,
   uploadFile,
-  removeFile,
   createBucketIfNotExists,
 };

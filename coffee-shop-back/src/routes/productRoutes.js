@@ -7,7 +7,8 @@ const {
   addProduct,
   deleteProduct,
   findProductById,
-  updateProduct,
+  // updateProduct,
+  patchProduct,
 } = require('../controllers/productController');
 const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 
@@ -22,13 +23,21 @@ router.post(
   upload.single('image'),
   addProduct
 );
-router.put(
+// router.put(
+//   '/:id',
+//   authenticateToken,
+//   isAdmin,
+//   upload.single('image'),
+//   updateProduct
+// ); // ✨ ویرایش محصول
+
+router.patch(
   '/:id',
   authenticateToken,
   isAdmin,
   upload.single('image'),
-  updateProduct
-); // ✨ ویرایش محصول
+  patchProduct
+);
 router.delete('/:id', authenticateToken, isAdmin, deleteProduct); // حذف محصول
 router.get('/:id', findProductById);
 
