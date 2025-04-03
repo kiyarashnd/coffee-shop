@@ -23,6 +23,7 @@ type FormInterface = {
   price: number;
   image?: any;
   category: { value?: string; label?: string }; // فیلد جدید دسته‌بندی
+  available?: string | null;
 };
 
 const formSchema: ObjectSchema<FormInterface> = yup.object().shape({
@@ -37,6 +38,7 @@ const formSchema: ObjectSchema<FormInterface> = yup.object().shape({
       label: yup.string(),
     })
     .required('لطفاً دسته‌بندی را انتخاب کنید'),
+  available: yup.string().nullable(),
 });
 
 const Area = () => {
@@ -67,6 +69,7 @@ const Area = () => {
     resolver: yupResolver(formSchema),
     values: {
       description: data?.description ? data?.description : '',
+      available: data?.available ? data?.available : '',
       name: data?.name ? data?.name : '',
       image: data?.image
         ? [new File([`blob:${data?.image}`], 'name.jpg')]
@@ -95,10 +98,12 @@ const Area = () => {
     }
     try {
       const formDataToSend = new FormData();
+      console.log('form data is : ', formData);
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', `${formData.price}`);
       formDataToSend.append('category', selectedOption ? selectedOption : ''); // ارسال دسته‌بندی
+      formDataToSend.append('available', `${data.available}`);
 
       if (imageChange && formData.image && formData.image.length > 0) {
         formData.image.forEach((img: File) => {
@@ -191,6 +196,36 @@ const Area = () => {
           className='border border-gray-300 rounded-sm h-8'
           {...register('price')}
         />
+      </section>
+
+      <section className='flex gap-4'>
+        <p>موجود :</p>
+        <div className='flex gap-1'>
+          <input
+            type='radio'
+            id='first'
+            {...register('available')}
+            value='true'
+          />
+          <label htmlFor='first' className='ml-2'>
+            هست
+          </label>
+        </div>
+        <div className='flex gap-1'>
+          <input
+            type='radio'
+            id='second'
+            {...register('available')}
+            value='false'
+          />
+          <label htmlFor='second' className='ml-2'>
+            نیست
+          </label>
+        </div>
+
+        {errors.available && (
+          <p className='text-red-500 text-sm'>{errors.available.message}</p>
+        )}
       </section>
 
       {/* اضافه کردن فیلد دسته‌بندی با react-select */}

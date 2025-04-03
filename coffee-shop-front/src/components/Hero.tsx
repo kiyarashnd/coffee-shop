@@ -182,7 +182,7 @@ const Hero = () => {
                   fontWeight: 'bold',
                 }}
               >
-                +8
+                +۸
               </Typography>
               <Typography
                 sx={{
@@ -191,7 +191,7 @@ const Hero = () => {
                   fontWeight: 'bold',
                 }}
               >
-                نوع قهوه
+                نوع قهوه و تجهیزات
               </Typography>
             </Box>
           </Typography>

@@ -1,15 +1,6 @@
 const Product = require('../models/Product');
 const { uploadFile, minioClient, BUCKET_NAME } = require('../config/minio');
 
-// exports.getProducts = async (req, res) => {
-//   try {
-//     const products = await Product.find();
-//     res.status(200).json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Server Error' });
-//   }
-// };
-
 exports.getProducts = async (req, res) => {
   try {
     const filter = {};
@@ -36,7 +27,7 @@ exports.getProducts = async (req, res) => {
 
 exports.addProduct = async (req, res) => {
   try {
-    const { name, price, description, category } = req.body;
+    const { name, price, description, category, available } = req.body;
     console.log(req.body);
 
     if (!name || !price || !req.file || !category) {
@@ -53,6 +44,7 @@ exports.addProduct = async (req, res) => {
       description,
       image: uploadedImage.url, // Store full image URL
       category,
+      available,
     });
 
     await newProduct.save();
@@ -101,50 +93,12 @@ exports.findProductById = async (req, res) => {
   }
 };
 
-// exports.updateProduct = async (req, res) => {
-//   try {
-//     const { name, price, description, category } = req.body;
-//     const productId = req.params.id;
-
-//     const product = await Product.findById(productId);
-//     if (!product) {
-//       return res.status(404).json({ message: 'Product not found' });
-//     }
-
-//     // فقط اگر فایل جدید ارسال شده باشد، عملیات آپلود و حذف انجام شود
-//     if (req.file) {
-//       // حذف عکس قدیمی از MinIO
-//       const oldImageKey = product.image.split('/').slice(-1)[0];
-//       await minioClient.destroy(BUCKET_NAME, `products/${oldImageKey}`);
-
-//       // آپلود عکس جدید
-//       const uploadedImage = await uploadFile(req.file);
-//       product.image = uploadedImage.url;
-//     }
-
-//     // به‌روزرسانی فیلدهای دیگر
-//     product.name = name || product.name;
-//     product.price = price || product.price;
-//     product.description = description || product.description;
-//     if (category) {
-//       product.category = category;
-//     }
-
-//     await product.save();
-//     res.json({ message: 'Product updated successfully', product });
-//   } catch (error) {
-//     console.error('Update Error:', error);
-//     res.status(500).json({ message: 'Server error', error: error.message });
-//   }
-// };
-
 exports.patchProduct = async (req, res) => {
   try {
     const productId = req.params.id;
     const updateData = req.body; // فقط فیلدهای تغییر یافته
     // اگر فایل جدیدی آپلود شده، می‌توانید آن را به updateData اضافه کنید.
 
-    console.log('req.file is : ', req.file);
     if (req.file) {
       // عملیات حذف تصویر قدیمی و آپلود تصویر جدید
       const product = await Product.findById(productId);

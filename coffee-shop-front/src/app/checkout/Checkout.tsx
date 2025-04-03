@@ -28,6 +28,16 @@ export default function CheckoutPage() {
 
   const [phone, setPhone] = useState('');
 
+  const [shippingData, setShippingData] = useState({
+    fullName: '',
+    phoneNumber: '',
+    address: '',
+    city: '',
+    postalCode: '',
+  });
+
+  const [totalAmout, setTotalAmount] = useState<number>(0);
+
   useEffect(() => {
     if (isLoading || !data) return;
 
@@ -49,7 +59,13 @@ export default function CheckoutPage() {
   const steps = [
     {
       label: 'بررسی سبد خرید',
-      component: <CartStep onNext={() => setActiveStep((prev) => prev + 1)} />,
+      component: (
+        <CartStep
+          onNext={() => setActiveStep((prev) => prev + 1)}
+          totalAmout={totalAmout}
+          setTotalAmount={setTotalAmount}
+        />
+      ),
     },
     {
       label: 'اطلاعات ارسال',
@@ -59,6 +75,8 @@ export default function CheckoutPage() {
           onBack={() => setActiveStep((prev) => prev - 1)}
           phone={phone}
           setPhone={setPhone}
+          defaultValues={shippingData}
+          setShippingData={setShippingData}
         />
       ),
     },
@@ -69,8 +87,10 @@ export default function CheckoutPage() {
           onNext={() => setActiveStep((prev) => prev + 1)}
           onBack={() => setActiveStep((prev) => prev - 1)}
           items={cart}
-          totalAmount={cart.reduce((total, item) => total + item.price, 0)}
-          phone={phone}
+          // totalAmount={cart.reduce((total, item) => total + item.price, 0)}
+          totalAmount={totalAmout}
+          // phone={phone}
+          shippingData={shippingData}
         />
       ),
     },
@@ -84,7 +104,6 @@ export default function CheckoutPage() {
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }} dir='ltr'>
-      {/* استپر بالای صفحه */}
       <Stepper
         activeStep={activeStep}
         alternativeLabel

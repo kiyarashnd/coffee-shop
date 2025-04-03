@@ -10,6 +10,10 @@ const ProductSchema = new mongoose.Schema({
     enum: ['قهوه', 'تجهیزات', 'دستگاه ها', 'سایر'],
     required: true,
   },
+  available: {
+    type: Boolean,
+    default: true, // به صورت پیش‌فرض محصول موجود است
+  },
 });
 
 module.exports = mongoose.model('Product', ProductSchema);

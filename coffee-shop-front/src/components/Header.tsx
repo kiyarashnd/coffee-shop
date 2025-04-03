@@ -24,9 +24,11 @@ import { useCartStore } from '@/store/useCartStore';
 
 const navLinks = [
   { label: 'خانه', href: '/' },
-  { label: 'درباره ما', href: '/about' },
   { label: 'محصولات', href: '/products' },
-  { label: 'ارتباط با ما', href: '/contact' },
+
+  { label: 'درباره ما', href: '/about' },
+  // { label: 'ارتباط با ما', href: '/contact' },
+  { label: 'پیگیری محصول', href: '/tracking' },
 ];
 
 const Header = () => {

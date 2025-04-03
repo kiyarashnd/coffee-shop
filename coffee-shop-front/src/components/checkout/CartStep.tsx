@@ -5,9 +5,15 @@ import { useCartStore } from '@/store/useCartStore';
 
 interface CartStepProps {
   onNext: () => void; // تابعی که با کلیک دکمه "مرحله بعد" صدا می‌زنیم
+  totalAmout: number;
+  setTotalAmount: (data: number) => void;
 }
 
-export default function CartStep({ onNext }: CartStepProps) {
+export default function CartStep({
+  onNext,
+  totalAmout,
+  setTotalAmount,
+}: CartStepProps) {
   const cart = useCartStore((state) => state.cart);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
@@ -17,8 +23,9 @@ export default function CartStep({ onNext }: CartStepProps) {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  const discountValue = Math.floor(totalPrice * 0.33);
-  const finalPrice = totalPrice - discountValue;
+  // const discountValue = Math.floor(totalPrice * 0.33);
+  // const finalPrice = totalPrice - discountValue;
+  setTotalAmount(totalPrice);
 
   return (
     <Box>
@@ -88,12 +95,12 @@ export default function CartStep({ onNext }: CartStepProps) {
           <Typography>
             قیمت کالاها: {totalPrice.toLocaleString('fa-IR')} تومان
           </Typography>
-          <Typography color='error'>
+          {/* <Typography color='error'>
             سود شما (تخفیف): {discountValue.toLocaleString('fa-IR')} تومان (۳۳٪)
           </Typography>
           <Typography fontWeight='bold'>
             جمع نهایی: {finalPrice.toLocaleString('fa-IR')} تومان
-          </Typography>
+          </Typography> */}
         </Box>
       )}
 

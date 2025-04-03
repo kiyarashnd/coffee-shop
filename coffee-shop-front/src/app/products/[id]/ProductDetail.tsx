@@ -13,7 +13,7 @@ import ArrowBack from '@mui/icons-material/ArrowBack';
 import ShoppingCart from '@mui/icons-material/ShoppingCart';
 import CategoryIcon from '@mui/icons-material/Category';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Head from 'next/head';
 import { useFetchData } from '@/hooks/useFetchData';
 import { useCartStore } from '@/store/useCartStore';
@@ -27,6 +27,7 @@ const ProductDetail: React.FC = () => {
   //   { value: 'سایر', label: 'سایر' },
   // ];
 
+  const { push } = useRouter();
   const { id } = useParams();
   const { data, isLoading, error } = useFetchData(id as string);
   const product = data;
@@ -71,6 +72,7 @@ const ProductDetail: React.FC = () => {
         price: product.price,
         quantity,
       });
+      push('/checkout');
     }
   };
 
