@@ -12,6 +12,7 @@ const productRoutes = require('./src/routes/productRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const otpRoutes = require('./src/routes/otpRoutes');
 const paymentRoutes = require('./src/routes/paymentRoutes');
+const orderRoutes = require('./src/routes/orderRoutes');
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', otpRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/order', orderRoutes);
 
 async function startServer() {
   try {

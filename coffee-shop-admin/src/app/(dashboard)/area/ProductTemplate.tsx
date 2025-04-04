@@ -69,7 +69,12 @@ const Area = () => {
     resolver: yupResolver(formSchema),
     values: {
       description: data?.description ? data?.description : '',
-      available: data?.available ? data?.available : '',
+      available:
+        data?.available === false
+          ? 'false'
+          : data?.available === true
+          ? 'true'
+          : 'true',
       name: data?.name ? data?.name : '',
       image: data?.image
         ? [new File([`blob:${data?.image}`], 'name.jpg')]
@@ -97,13 +102,15 @@ const Area = () => {
       clearErrors('category');
     }
     try {
+      console.log('data.availabl is : ');
+      const available = formData.available === 'true' ? true : false;
       const formDataToSend = new FormData();
       console.log('form data is : ', formData);
       formDataToSend.append('name', formData.name);
       formDataToSend.append('description', formData.description);
       formDataToSend.append('price', `${formData.price}`);
       formDataToSend.append('category', selectedOption ? selectedOption : ''); // ارسال دسته‌بندی
-      formDataToSend.append('available', `${data.available}`);
+      formDataToSend.append('available', available as any); // تبدیل به بولین برای ارسال به بک‌اند
 
       if (imageChange && formData.image && formData.image.length > 0) {
         formData.image.forEach((img: File) => {

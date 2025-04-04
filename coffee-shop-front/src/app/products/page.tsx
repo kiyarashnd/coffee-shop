@@ -7,16 +7,10 @@ import { useFetchData } from '@/hooks/useFetchData';
 import { Product } from '@/types/products';
 import { Coffee, Package, ShoppingBag } from 'lucide-react';
 import { formatPriceToToman } from '@/utils/formatPrice';
+import { Typography } from '@mui/material';
 
 const Products: React.FC = () => {
   type ProductCategory = 'قهوه' | 'تجهیزات' | 'دستگاه ها' | 'سایر';
-
-  // const categories: { name: ProductCategory; icon: React.FC<{ size?: number }> }[] = [
-  //   { name: 'قهوه', icon: Coffee },
-  //   { name: 'تجهیزات', icon: Package },
-  //   { name: 'دستگاه ها', icon: ShoppingBag },
-  //   { name: 'سایر', icon: ShoppingBag },
-  // ];
 
   const categories = [
     { name: 'قهوه' as ProductCategory, icon: Coffee },
@@ -43,7 +37,7 @@ const Products: React.FC = () => {
       );
     }
 
-    // فیلتر بر اساس جستجو (در نام یا توضیحات)
+    // فیلتر بر اساس جستجو (نام یا توضیحات)
     if (searchTerm) {
       const lowercasedSearch = searchTerm.toLowerCase();
       result = result.filter(
@@ -56,15 +50,19 @@ const Products: React.FC = () => {
     setFilteredProducts(result);
   }, [data, searchTerm, activeCategory]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (isLoading) return <p className='text-center py-10'>Loading...</p>;
+  if (error)
+    return <p className='text-center text-red-500'>Error: {error.message}</p>;
 
   return (
     <div className='min-h-screen bg-white pt-2'>
       <div className='container mx-auto px-6 py-12'>
-        <h1 className='text-3xl md:text-4xl font-serif font-bold text-text-primary text-center mb-8'>
+        <Typography
+          variant='h3'
+          className='font-serif font-bold text-text-primary text-center mb-8'
+        >
           محصولات ما
-        </h1>
+        </Typography>
 
         {/* Search Bar */}
         <div className='max-w-md mx-auto mb-8'>
@@ -114,9 +112,9 @@ const Products: React.FC = () => {
         {/* Products Grid */}
         {filteredProducts?.length === 0 ? (
           <div className='text-center py-12'>
-            <p className='text-xl text-gray-500'>
+            <Typography variant='h5' className='text-gray-500'>
               محصول مورد نظر یافت نشد، دوباره جستجو کن!
-            </p>
+            </Typography>
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
@@ -124,7 +122,7 @@ const Products: React.FC = () => {
               <Link
                 href={`/products/${product._id}`}
                 key={product._id}
-                className='group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow'
+                className='group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow relative'
               >
                 <div className='relative overflow-hidden'>
                   <img
@@ -132,15 +130,31 @@ const Products: React.FC = () => {
                     alt={product.name}
                     width={400}
                     height={400}
-                    className='w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-300'
+                    className={`w-full h-64 object-cover transition-transform duration-300 ${
+                      product.available ? 'group-hover:scale-105' : 'grayscale'
+                    }`}
                   />
-                  <div className='absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity' />
+                  {!product.available && (
+                    <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
+                      <Typography variant='h6' className='text-white font-bold'>
+                        موجود نیست
+                      </Typography>
+                    </div>
+                  )}
                 </div>
                 <div className='p-6'>
-                  <h3 className='text-xl font-serif font-semibold text-text-primary mb-2'>
+                  <Typography
+                    variant='h6'
+                    className='text-xl font-serif font-semibold text-text-primary mb-2'
+                  >
                     {product.name}
-                  </h3>
-                  <p className='text-text-secondary mb-4'>{product.category}</p>
+                  </Typography>
+                  <Typography
+                    variant='body2'
+                    className='text-text-secondary mb-4'
+                  >
+                    {product.category}
+                  </Typography>
                   <div className='flex items-center justify-between'>
                     <span className='text-coffee-dark font-semibold'>
                       {formatPriceToToman(product.price)}

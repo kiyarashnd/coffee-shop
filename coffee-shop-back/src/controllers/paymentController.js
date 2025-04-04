@@ -15,7 +15,6 @@ exports.createPayment = async (req, res) => {
     const { items, totalAmount, phone } = req.body;
     const trackingCode = Date.now() + '-' + Math.floor(Math.random() * 99999);
 
-    // 1) ساخت سفارش در دیتابیس (در حالت pending) - اختیاری
     const order = await Order.create({
       phone,
       items,
@@ -78,7 +77,7 @@ exports.verifyPayment = async (req, res) => {
       // می‌توانید او را به صفحه "پرداخت ناموفق" در فرانت هدایت کنید
       return res.redirect(
         process.env.PAYMENT_FAILED_URL ||
-          'http://localhost:3000/chekout/payment-fail'
+          'http://localhost:3001/checkout/payment-fail'
       );
     }
 
@@ -96,7 +95,7 @@ exports.verifyPayment = async (req, res) => {
       // هدایت به صفحه موفق در فرانت
       return res.redirect(
         process.env.PAYMENT_SUCCESS_URL ||
-          'http://localhost:3000/checkout/payment-success'
+          'http://localhost:3001/checkout/payment-success'
       );
     } else {
       // خطا در وریفای
@@ -104,7 +103,7 @@ exports.verifyPayment = async (req, res) => {
       await order.save();
       return res.redirect(
         process.env.PAYMENT_FAILED_URL ||
-          'http://localhost:3000/checkout/payment-fail'
+          'http://localhost:3001/checkout/payment-fail'
       );
     }
   } catch (error) {

@@ -79,7 +79,7 @@ exports.deleteProduct = async (req, res) => {
 exports.findProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).select(
-      'name price image category description'
+      'name price image category description available'
     );
 
     if (!product) {

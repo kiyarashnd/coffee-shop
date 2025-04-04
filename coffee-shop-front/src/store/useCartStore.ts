@@ -6,6 +6,8 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+  available?: boolean; // برای نشان دادن موجودی
+  description?: string;
 }
 
 interface CartState {
@@ -13,6 +15,7 @@ interface CartState {
   addToCart: (item: CartItem) => void;
   updateQuantity: (id: number, quantity: number) => void;
   removeFromCart: (id: number) => void;
+  clearCart: () => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -32,6 +35,10 @@ export const useCartStore = create<CartState>()(
       removeFromCart: (id) =>
         set((state) => ({
           cart: state.cart.filter((item) => item.id !== id),
+        })),
+      clearCart: () =>
+        set(() => ({
+          cart: [],
         })),
     }),
     { name: 'cart-storage' }

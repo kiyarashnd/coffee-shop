@@ -29,7 +29,13 @@ export default function MainLayout(props: { children: ReactElement }) {
           href='/get-all'
           className='border-b border-black hover:text-gray-500'
         >
-          نمایش همه محصولات
+          همه محصولات
+        </Link>
+        <Link
+          href='/get-all'
+          className='border-b border-black hover:text-gray-500'
+        >
+          محصولات ثبت شده
         </Link>
         <div
           onClick={logoutHandler}

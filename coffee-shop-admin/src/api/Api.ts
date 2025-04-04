@@ -84,4 +84,10 @@ export namespace Api {
   export function signout() {
     return new Fetcher(new URL(`${BASE_URL}/api/auth/logout`));
   }
+
+  export function GetAllOrders() {
+    return new Fetcher<any>(new URL(`${BASE_URL}/api/order`), {
+      method: 'GET',
+    });
+  }
 }

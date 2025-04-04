@@ -3,7 +3,7 @@
 import React from 'react';
 import './globals.css'; // Optional: your global CSS
 import localFont from 'next/font/local';
-import ClientApp from '@/components/ClientApp';
+import ClientApp from '@/components/layout/ClientApp';
 import { Providers } from '../../src/Providers';
 
 // export const metadata = {

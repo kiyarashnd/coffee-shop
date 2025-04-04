@@ -15,6 +15,7 @@ import OtpModal from '../OtpModal';
 import { ObjectSchema } from 'yup';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import WarningIcon from '@mui/icons-material/Warning';
 
 interface ShippingStepProps {
   onNext: () => void;
@@ -38,12 +39,21 @@ const formSchema: ObjectSchema<ShippingFormData> = yup.object().shape({
   phoneNumber: yup
     .string()
     .required('شماره موبایل اجباری است.')
-    .matches(/09[0-3][0-9]-?[0-9]{3}-?[0-9]{4}/, 'فرمت شماره موبایل صحیح نیست.')
+    .matches(/^09\d{9}$/, 'فرمت شماره موبایل صحیح نیست.')
     .max(11, 'شماره موبایل حداکثر ۱۱ کاراکتر است.'),
   fullName: yup.string().required('نام و نام خانوادگی اجباری است.'),
-  address: yup.string().required('آدرس اجباری است.'),
+  address: yup
+    .string()
+    .required('آدرس اجباری است.')
+    .matches(/^[\u0600-\u06FF\s\d-–]+$/, 'آدرس را به فرمت درست وارد کنید'),
   city: yup.string().required('شهر اجباری است.'),
-  postalCode: yup.string().required('کد پستی اجباری است.'),
+  postalCode: yup
+    .string()
+    .required('کد پستی اجباری است.')
+    .matches(
+      /\b(?!(d)\1{3})[13-9]{4}[1346-9][013-9]{5}\b/,
+      'فرمت کد پستی صحیح نیست'
+    ),
 });
 
 export default function ShippingStep({
@@ -126,7 +136,7 @@ export default function ShippingStep({
   };
 
   return (
-    <Box>
+    <Box dir='rtl'>
       <Typography
         variant='h6'
         sx={{ mb: 2, fontWeight: 'bold', justifyContent: 'center' }}
@@ -142,7 +152,13 @@ export default function ShippingStep({
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <div className='bg-yellow-100 border border-yellow-300 text-yellow-700 text-sm rounded p-3 mb-6 w-full text-right shadow'>
+        <WarningIcon />
+        دقت کنید محصول به نشانی و کد پستی وارد شده ارسال میشود و در صورت نادرست
+        بودن اطلاعات، سفارش شما با تأخیر مواجه خواهد شد.
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} dir='ltr'>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -200,7 +216,7 @@ export default function ShippingStep({
         </Grid>
 
         {/* دکمه‌های پایین فرم */}
-        <Box display='flex' justifyContent='space-between' mt={4}>
+        <Box display='flex' justifyContent='space-between' mt={4} dir='ltr'>
           <Button variant='outlined' onClick={onBack}>
             بازگشت
           </Button>

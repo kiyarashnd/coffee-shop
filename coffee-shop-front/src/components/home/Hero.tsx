@@ -10,12 +10,7 @@ const Hero = () => {
     <Box
       sx={{
         backgroundImage: 'url(/coffee-hero.png)', // Place this image in the public folder
-        // backgroundSize: 'cover',
-        // backgroundPosition: 'center',
-        // height: { xs: '60vh', md: '80vh' },
         display: 'flex',
-        // alignItems: 'center',
-        // justifyContent: 'center',
         color: 'white',
         textAlign: 'center',
         px: 2,
@@ -54,51 +49,23 @@ const Hero = () => {
             justifyContent: 'center',
           }}
         >
-          {/* <RotatingImage
-            src='/coffee-heroص.png'
-            alt='Coffee Cup'
-            width='600'
-            height='300'
-          /> */}
           <Box
             component='img'
             sx={{
               height: 220,
               width: 220,
-              //   maxHeight: { xs: 233, md: 167 },
-              //   maxWidth: { xs: 350, md: 250 },
               marginX: 'auto',
             }}
             alt='The house from the offer.'
             src='/coffee-gif.gif'
           />
-          {/* <Box
-            component='img'
-            sx={{
-              //   height: 233,
-              //   width: 350,
-              //   maxHeight: { xs: 233, md: 167 },
-              //   maxWidth: { xs: 350, md: 250 },
-              marginX: 'auto',
-            }}
-            alt='The house from the offer.'
-            src='/coffee-heroص.png'
-          /> */}
         </Container>
         <Box
           sx={{
             backgroundImage: 'url(/image.png)', // Place this image in the public folder
             backgroundSize: 'cover',
-            // backgroundPosition: 'center',
-            // height: { xs: '60vh', md: '80vh' },
             display: 'flex',
-            // alignItems: 'center',
             justifyContent: 'center',
-            // color: 'white',
-            // textAlign: 'center',
-            // px: 2,
-            // rotate: '180deg',
-            // marginTop: '-35px',
           }}
         >
           <Typography
@@ -107,9 +74,6 @@ const Hero = () => {
               display: { xs: 'none', md: 'flex' },
               justifyContent: 'space-evenly',
               width: '100%',
-
-              //   flexDirection: { sm: 'column', lg: 'column' },
-              //   flexDirection: 'column',
             }}
           >
             <Box

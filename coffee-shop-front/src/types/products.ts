@@ -6,4 +6,5 @@ export interface Product {
   __v?: number;
   image?: string;
   category?: string;
+  available?: boolean;
 }

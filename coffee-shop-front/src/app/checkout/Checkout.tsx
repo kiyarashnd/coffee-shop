@@ -43,15 +43,11 @@ export default function CheckoutPage() {
 
     // بررسی تک‌تک محصولات سبد
     cart.forEach((item) => {
-      // آیا این محصول در data (از دیتابیس) وجود دارد؟
       const found = data.find((dbProd: Product) => dbProd._id === item.id);
 
-      // اگر وجود نداشت، یعنی حذف شده یا دیگر فعال نیست
+      // if (!found  || found.available === false) {
       if (!found) {
         removeFromCart(item.id);
-      } else {
-        // اگر لازم است قیمت یا موجودی را هم چک کنید، اینجا مقایسه انجام دهید
-        // مثلا اگر found.price !== item.price => آپدیت قیمت یا اطلاع کاربر
       }
     });
   }, [isLoading, data, cart, removeFromCart]);
@@ -64,6 +60,7 @@ export default function CheckoutPage() {
           onNext={() => setActiveStep((prev) => prev + 1)}
           totalAmout={totalAmout}
           setTotalAmount={setTotalAmount}
+          productsData={data} // داده‌های دریافت شده از بک‌اند
         />
       ),
     },

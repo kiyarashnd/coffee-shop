@@ -48,6 +48,11 @@ function GetAllpage() {
   const { data, mutate, isLoading } = useSWR(`/api/products`, () =>
     Api.GetAllProperties().enq()
   );
+  const { data: getallOrder } = useSWR(`/api/orders`, () =>
+    Api.GetAllOrders().enq()
+  );
+
+  console.log('get all orders : ', getallOrder);
 
   const gridRef = useRef<AgGridReact>(null);
 
@@ -56,6 +61,7 @@ function GetAllpage() {
     { field: 'description', headerName: 'توضیحات', filter: false },
     { field: 'price', headerName: 'قیمت', filter: false },
     { field: 'category', headerName: 'دسته بندی', filter: false },
+    { field: 'available', headerName: 'موجود؟', filter: false },
   ]);
 
   const [tableData, setTableData] = useState();
@@ -69,6 +75,7 @@ function GetAllpage() {
           price: formatPriceToToman(item?.price),
           description: item?.description,
           category: item?.category,
+          available: item?.available === true ? 'بله' : 'خیر', // Assuming available is a boolean in the API response
         };
       })
     );
