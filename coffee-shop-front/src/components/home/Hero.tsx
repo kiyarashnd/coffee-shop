@@ -6,6 +6,23 @@ import { useRouter } from 'next/navigation';
 
 const Hero = () => {
   const { push } = useRouter();
+
+  const beans: { top: string; left: string }[] = [
+    { top: '320px', left: '20%' },
+    { top: '320px', left: '20%' },
+    { top: '320px', left: '20%' },
+    { top: '320px', left: '20%' },
+    { top: '350px', left: '60%' },
+    { top: '280px', left: '65%' },
+    { top: '380px', left: '40%' },
+    { top: '320px', left: '20%' },
+    { top: '480px', left: '40%' },
+    { top: '280px', left: '45%' },
+    { top: '300px', left: '35%' },
+    { top: '300px', left: '5%' },
+    { top: '380px', left: '15%' },
+    { top: '280px', left: '80%' },
+  ];
   return (
     <Box
       sx={{
@@ -74,136 +91,27 @@ const Hero = () => {
             pointerEvents: 'none',
             zIndex: 0,
           }}
-        >
-          {/* یک نمونه از دانه */}
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '320px',
-              left: '20%',
-              width: '50px',
-            }}
-          />
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '350px',
-              left: '60%',
-              width: '50px',
-            }}
-          />
+        />
+        {beans?.map((item) => {
+          console.log('item is : ');
+          return (
+            <>
+              <Box
+                className='coffee-bean'
+                component='img'
+                src='/images/bean.png'
+                alt='bean1'
+                sx={{
+                  position: 'absolute',
+                  top: `${item.top}`,
+                  left: `${item.left}`,
+                  width: '50px',
+                }}
+              />
+            </>
+          );
+        })}
 
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '280px',
-              left: '65%',
-              width: '50px',
-            }}
-          />
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean2'
-            sx={{
-              position: 'absolute',
-              top: '380px',
-              left: '40%',
-              width: '50px',
-            }}
-          />
-
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean2'
-            sx={{
-              position: 'absolute',
-              top: '480px',
-              left: '40%',
-              width: '50px',
-            }}
-          />
-
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '280px',
-              left: '45%',
-              width: '50px',
-            }}
-          />
-
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '300px',
-              left: '35%',
-              width: '50px',
-            }}
-          />
-
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '300px',
-              left: '5%',
-              width: '50px',
-            }}
-          />
-
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean1'
-            sx={{
-              position: 'absolute',
-              top: '380px',
-              left: '15%',
-              width: '50px',
-            }}
-          />
-          <Box
-            className='coffee-bean'
-            component='img'
-            src='/images/bean.png'
-            alt='bean2'
-            sx={{
-              position: 'absolute',
-              top: '280px',
-              left: '80%',
-              width: '50px',
-            }}
-          />
-          {/* به همین شکل می‌توانید دانه‌های دیگری اضافه کنید */}
-        </Box>
         {/* <Box
           sx={{
             backgroundImage: 'url(/image.png)', // Place this image in the public folder

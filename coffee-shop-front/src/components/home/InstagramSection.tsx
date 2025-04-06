@@ -119,6 +119,7 @@ const InstagramSection = () => {
             mx: 2,
             mt: { xs: 2, md: 0 },
             mb: { xs: 2, md: 0 },
+            zIndex: 1,
           }}
         />
         {/* تصویر گوشی */}
