@@ -56,7 +56,9 @@ const FeaturedCoffees = () => {
           breakpoints={{
             320: { slidesPerView: 1 },
             640: { slidesPerView: 2 },
-            1024: { slidesPerView: products.length > 3 ? 3 : products.length },
+            1024: {
+              slidesPerView: products?.length > 3 ? 3 : products?.length,
+            },
           }}
           autoplay={{ delay: 2000, disableOnInteraction: false }}
           pagination={{ clickable: true }}

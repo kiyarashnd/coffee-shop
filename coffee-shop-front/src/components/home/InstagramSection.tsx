@@ -36,7 +36,7 @@ const InstagramSection = () => {
       tl.from(
         '.insta-text',
         {
-          x: -200,
+          x: 200,
           opacity: 0,
           duration: 1,
           ease: 'power2.out',
@@ -77,19 +77,26 @@ const InstagramSection = () => {
     <Box
       ref={containerRef}
       sx={{
-        position: 'relative',
+        minHeight: '80vh', // در موبایل هم حداقل یک ارتفاع صفحه
+        // position: 'relative',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#F8F5F1',
+        // backgroundColor: '#F8F5F1',
+        backgroundImage: 'url(/coffee-hero.png)', // Place this image in the public folder
       }}
     >
       <Container
         sx={{
-          position: 'relative',
+          // position: 'relative',
           textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'row',
+          display: {
+            md: 'flex',
+          },
+          flexDirection: {
+            sm: 'column',
+            lg: 'row',
+          },
           justifyContent: 'center',
           alignItems: 'center',
           // py: { xs: 5, md: 10 }, // حاشیه عمودی بنا به نیاز
@@ -150,6 +157,7 @@ const InstagramSection = () => {
             sx={{
               color: '#6B5840',
               lineHeight: 1.7,
+              fontSize: '1.5rem',
             }}
           >
             با بیش از ده سال تجربه در اداره کافه‌ها و رستوران‌ها، و پنج سال
