@@ -17,7 +17,7 @@ const InstagramSection = () => {
         scrollTrigger: {
           trigger: containerRef.current, // عنصری که باید پین شود
           start: 'top top',
-          end: '+=200%', // طول پین (2 برابر ارتفاع ویوپورت)
+          end: '+=100%', // طول پین (2 برابر ارتفاع ویوپورت)
           pin: true, // در این فاصله سکشن پین بماند
           scrub: true, // با اسکرول هماهنگ شود
           markers: false,
@@ -25,12 +25,16 @@ const InstagramSection = () => {
       });
 
       // (1) گوشی از پایین بالا بیاید
-      tl.from('.phone', {
-        y: 300, // از 300px پایین صفحه
-        opacity: 0,
-        duration: 1.2,
-        ease: 'power2.out',
-      });
+      tl.from(
+        '.phone',
+        {
+          y: 300, // از 300px پایین صفحه
+          opacity: 0,
+          duration: 1,
+          ease: 'power2.out',
+        },
+        '-=1'
+      );
 
       // (2) متن "اینستاگرام ما" از چپ وارد شود
       tl.from(
@@ -78,11 +82,11 @@ const InstagramSection = () => {
     <Box
       ref={containerRef}
       sx={{
-        minHeight: '80vh', // در موبایل هم حداقل یک ارتفاع صفحه
+        // minHeight: '80vh', // در موبایل هم حداقل یک ارتفاع صفحه
         // position: 'relative',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        // alignItems: 'center',
+        // justifyContent: 'center',
         // backgroundColor: '#F8F5F1',
         backgroundImage: 'url(/coffee-hero.png)', // Place this image in the public folder
       }}
@@ -104,6 +108,19 @@ const InstagramSection = () => {
           py: 2,
         }}
       >
+        <Box
+          component='img'
+          ref={containerRef}
+          src='/images/coffee-mug.png'
+          alt='Coffee Mug'
+          className='coffee-mug'
+          sx={{
+            width: { xs: '100px', md: '150px' },
+            mx: 2,
+            mt: { xs: 2, md: 0 },
+            mb: { xs: 2, md: 0 },
+          }}
+        />
         {/* تصویر گوشی */}
         <Box
           className='phone'
