@@ -12,7 +12,7 @@ const zarinpal = ZarinPal.create(MERCHANT_ID, SANDBOX, CURRENCY);
 
 exports.createPayment = async (req, res) => {
   try {
-    const { items, totalAmount, phone } = req.body;
+    const { items, totalAmount, phone, shippingData } = req.body;
     const trackingCode = Date.now() + '-' + Math.floor(Math.random() * 99999);
 
     const order = await Order.create({
@@ -21,6 +21,12 @@ exports.createPayment = async (req, res) => {
       totalAmount,
       trackingCode,
       paymentStatus: 'pending',
+      shippingAddress: {
+        fullName: shippingData.fullName,
+        addressLine: shippingData.address,
+        city: shippingData.city,
+        postalCode: shippingData.postalCode,
+      },
     });
 
     // 2) فراخوانی متد PaymentRequest از زرین‌پال

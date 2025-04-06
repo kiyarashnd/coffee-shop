@@ -13,11 +13,12 @@ const fetchData = async (id?: string) => {
 };
 
 export const useFetchData = (id?: string) => {
-  return useQuery({
+  const queryResult = useQuery({
     queryKey: ['fetchData', id],
     queryFn: () => fetchData(id),
-    // staleTime: 5000,
     staleTime: 0, // همیشه بلافاصله استیل می‌شود
-    // cacheTime: 0,   // پس از unmount بلافاصله از کش حذف می‌شود
   });
+
+  // اضافه کردن پراپرتی mutate که در واقع همان refetch است
+  return { ...queryResult, mutate: queryResult.refetch };
 };

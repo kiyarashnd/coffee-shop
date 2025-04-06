@@ -79,7 +79,8 @@ export default function CartStep({
                   </Typography>
                   {!isAvailable && (
                     <Typography variant='caption' color='error'>
-                      این محصول موجود نیست!
+                      {/* این محصول موجود نیست! */}
+                      در حال تامین کالا
                     </Typography>
                   )}
                 </Box>

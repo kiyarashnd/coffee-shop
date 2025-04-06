@@ -21,7 +21,7 @@ const CategorySection = () => {
     gsap.registerPlugin(ScrollTrigger);
 
     // یک context برای مدیریت بهتر انیمیشن‌ها در React
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       // انیمیشن ورود سکشن از چپ
       gsap.from('.category-container', {
         scrollTrigger: {

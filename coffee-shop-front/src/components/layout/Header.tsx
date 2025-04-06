@@ -117,7 +117,7 @@ const Header = () => {
       </AppBar>
 
       {/* Mobile Drawer */}
-      <Drawer anchor='right' open={drawerOpen} onClose={toggleDrawer(false)}>
+      <Drawer anchor='left' open={drawerOpen} onClose={toggleDrawer(false)}>
         {drawerContent}
       </Drawer>
     </>

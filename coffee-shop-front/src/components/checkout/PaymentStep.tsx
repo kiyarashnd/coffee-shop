@@ -40,7 +40,7 @@ export default function PaymentStep({
   const [invalidItems, setInvalidItems] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const phone = shippingData.phoneNumber;
-  const router = useRouter();
+  console.log('shiping data is : ', shippingData);
 
   // useEffect برای بررسی سبد خرید به صورت مداوم (مثلاً قبل از پرداخت)
   useEffect(() => {
@@ -85,7 +85,12 @@ export default function PaymentStep({
     const resp = await fetch('http://localhost:3000/api/payment/pay', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: itemsToPay, totalAmount: newTotal, phone }),
+      body: JSON.stringify({
+        items: itemsToPay,
+        totalAmount: newTotal,
+        phone,
+        shippingData,
+      }),
     });
     if (!resp.ok) {
       const errData = await resp.json();

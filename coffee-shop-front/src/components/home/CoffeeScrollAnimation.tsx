@@ -13,7 +13,7 @@ const CoffeeScrollAnimation = () => {
     gsap.registerPlugin(ScrollTrigger);
 
     // یک context برای مدیریت بهتر GSAP در React
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       // مثال: المان‌هایی که کلاس .coffee-section دارند را با اسکرول انیمیت می‌کنیم
       gsap.utils.toArray('.coffee-section').forEach((section: any, index) => {
         // از ScrollTrigger استفاده می‌کنیم تا هر سکشن هنگامی که به آن رسیدیم،

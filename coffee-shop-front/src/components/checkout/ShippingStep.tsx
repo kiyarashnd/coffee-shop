@@ -73,9 +73,9 @@ export default function ShippingStep({
   } = useForm<ShippingFormData>({
     resolver: yupResolver(formSchema),
     defaultValues: defaultValues, // استفاده از داده‌های قبلی
-    mode: 'onSubmit',
+    mode: 'all',
   });
-  const phoneNumber = watch('phoneNumber');
+  // const phoneNumber = watch('phoneNumber');
 
   // استیت‌ها
   const [errorMessage, setErrorMessage] = useState('');

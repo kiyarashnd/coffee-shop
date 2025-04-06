@@ -19,11 +19,26 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   shippingAddress: {
-    // اطلاعات آدرس، کد پستی و ...
-    addressLine: String,
-    city: String,
-    postalCode: String,
-    // فیلدهای دیگر در صورت نیاز...
+    fullName: {
+      // نام و نام خانوادگی کاربر
+      type: String,
+      required: true,
+    },
+    addressLine: {
+      // آدرس کامل
+      type: String,
+      required: true,
+    },
+    city: {
+      // شهر
+      type: String,
+      required: true,
+    },
+    postalCode: {
+      // کد پستی
+      type: String,
+      required: true,
+    },
   },
   trackingCode: {
     type: String,

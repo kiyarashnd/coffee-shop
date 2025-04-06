@@ -284,7 +284,8 @@ const ProductDetail: React.FC = () => {
               {!product.available && (
                 <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center'>
                   <Typography variant='h6' className='text-white font-bold'>
-                    این محصول موجود نیست
+                    {/* این محصول موجود نیست */}
+                    در حال تامین کالا
                   </Typography>
                 </div>
               )}

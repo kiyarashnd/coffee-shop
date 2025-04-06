@@ -4,6 +4,7 @@ const { getAllOrders, getMyOrders } = require('../controllers/orderController');
 const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 
 router.get('/', authenticateToken, isAdmin, getAllOrders);
-router.get('/my', authenticateToken, getMyOrders);
+// router.get('/my', authenticateToken, getMyOrders);
+router.get('/my', getMyOrders);
 
 module.exports = router;

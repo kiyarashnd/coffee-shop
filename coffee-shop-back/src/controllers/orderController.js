@@ -14,20 +14,13 @@ exports.getAllOrders = async (req, res) => {
 // controllers/orderController.js
 exports.getMyOrders = async (req, res) => {
   try {
-    // چون در verifyOTP یا refreshToken مربوط به OTPController
-    // یک توکن که در payload آن phone ذخیره شده ایجاد کردید
-    // اینجا phone رو از req.user (یا هر جایی که فرستادید) می‌گیرید
-    const userPhone = req.user.phone;
+    const userPhone = req.query.phone;
     if (!userPhone) {
-      return res
-        .status(401)
-        .json({ message: 'شماره تلفن کاربر در توکن یافت نشد' });
+      return res.status(401).json({ message: 'شماره تلفن کاربر یافت نشد' });
     }
-
     const orders = await Order.find({ phone: userPhone }).sort({
       createdAt: -1,
     });
-
     res.json({ success: true, orders });
   } catch (error) {
     console.error('Error in getMyOrders', error);

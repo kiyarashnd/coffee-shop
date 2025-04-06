@@ -22,7 +22,8 @@ type Product = {
 
 export default function CheckoutPage() {
   const [activeStep, setActiveStep] = useState(0);
-  const { data, isLoading } = useFetchData();
+  // اضافه کردن mutate برای refetch
+  const { data, isLoading, mutate } = useFetchData();
 
   const { cart, removeFromCart } = useCartStore();
 
@@ -38,19 +39,36 @@ export default function CheckoutPage() {
 
   const [totalAmout, setTotalAmount] = useState<number>(0);
 
+  // این useEffect بررسی می‌کند که آیا محصولات موجود در سبد خرید تغییر کرده‌اند
   useEffect(() => {
     if (isLoading || !data) return;
 
-    // بررسی تک‌تک محصولات سبد
     cart.forEach((item) => {
       const found = data.find((dbProd: Product) => dbProd._id === item.id);
 
-      // if (!found  || found.available === false) {
+      // اگر محصول حذف شده باشد (یا در صورت نیاز اگر available بررسی شود)
       if (!found) {
         removeFromCart(item.id);
       }
     });
   }, [isLoading, data, cart, removeFromCart]);
+
+  // // useEffect برای رفرش اطلاعات در صورت تغییر تب یا برگشت به صفحه (برای مرحله اول)
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     if (document.visibilityState === 'visible') {
+  //       // بازخوانی اطلاعات محصولات از بک‌اند
+  //       setActiveStep(0);
+  //       mutate();
+  //     }
+  //   };
+
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  //   return () => {
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   };
+  // }, [activeStep, mutate]);
 
   const steps = [
     {
@@ -84,19 +102,17 @@ export default function CheckoutPage() {
           onNext={() => setActiveStep((prev) => prev + 1)}
           onBack={() => setActiveStep((prev) => prev - 1)}
           items={cart}
-          // totalAmount={cart.reduce((total, item) => total + item.price, 0)}
           totalAmount={totalAmout}
-          // phone={phone}
           shippingData={shippingData}
         />
       ),
     },
-    {
-      label: 'پایان خرید',
-      component: (
-        <CompleteStep onBack={() => setActiveStep((prev) => prev - 1)} />
-      ),
-    },
+    // {
+    //   label: 'پایان خرید',
+    //   component: (
+    //     <CompleteStep onBack={() => setActiveStep((prev) => prev - 1)} />
+    //   ),
+    // },
   ];
 
   return (
@@ -113,7 +129,6 @@ export default function CheckoutPage() {
           </Step>
         ))}
       </Stepper>
-
       {steps[activeStep].component}
     </Box>
   );

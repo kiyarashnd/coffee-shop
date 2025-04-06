@@ -101,7 +101,7 @@ const FeaturedCoffees = () => {
                     }}
                   >
                     <Typography variant='h6' color='white' fontWeight='bold'>
-                      موجود نیست
+                      در حال تامین کالا
                     </Typography>
                   </Box>
                 )}
