@@ -70,6 +70,7 @@ const InstagramSection = () => {
       // '-=0.3' یعنی 0.3 ثانیه قبل از پایان انیمیشن قبلی شروع شود
     }, containerRef);
 
+    //revert for clean animation
     return () => ctx.revert();
   }, []);
 
