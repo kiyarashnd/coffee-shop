@@ -7,7 +7,7 @@ import { useFetchData } from '@/hooks/useFetchData';
 import { Product } from '@/types/products';
 import { Coffee, Package, ShoppingBag } from 'lucide-react';
 import { formatPriceToToman } from '@/utils/formatPrice';
-import { Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 const Products: React.FC = () => {
   type ProductCategory = 'قهوه' | 'تجهیزات' | 'دستگاه ها' | 'سایر';
@@ -82,8 +82,8 @@ const Products: React.FC = () => {
         </div>
 
         {/* Categories */}
-        <div className='flex flex-wrap justify-center gap-4 mb-12'>
-          <button
+        <Box className='flex flex-wrap justify-center gap-4 mb-12'>
+          <Button
             onClick={() => setActiveCategory('همه')}
             className={`px-6 py-2 rounded-full transition-all ${
               activeCategory === 'همه'
@@ -92,9 +92,9 @@ const Products: React.FC = () => {
             }`}
           >
             همه محصولات
-          </button>
+          </Button>
           {categories.map((category) => (
-            <button
+            <Button
               key={category.name}
               onClick={() => setActiveCategory(category.name)}
               className={`px-6 py-2 rounded-full transition-all flex items-center gap-2 ${
@@ -105,9 +105,9 @@ const Products: React.FC = () => {
             >
               <category.icon size={18} />
               {category.name}
-            </button>
+            </Button>
           ))}
-        </div>
+        </Box>
 
         {/* Products Grid */}
         {filteredProducts?.length === 0 ? (

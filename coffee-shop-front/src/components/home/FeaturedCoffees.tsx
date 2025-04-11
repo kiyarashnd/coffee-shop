@@ -31,36 +31,36 @@ interface Product {
 }
 
 const FeaturedCoffees = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  // const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+  // useEffect(() => {
+  //   gsap.registerPlugin(ScrollTrigger);
 
-    // ساخت یک تایم‌لاین که المان‌ها با اسکرول و پین شدن ظاهر شوند
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current, // عنصری که باید پین شود
-          start: 'top top',
-          end: '+=100%', // طول پین (2 برابر ارتفاع ویوپورت)
-          pin: true, // در این فاصله سکشن پین بماند
-          scrub: true, // با اسکرول هماهنگ شود
-          markers: false,
-        },
-      });
+  //   // ساخت یک تایم‌لاین که المان‌ها با اسکرول و پین شدن ظاهر شوند
+  //   const ctx = gsap.context(() => {
+  //     const tl = gsap.timeline({
+  //       scrollTrigger: {
+  //         trigger: containerRef.current, // عنصری که باید پین شود
+  //         start: 'top top',
+  //         end: '+=100%', // طول پین (2 برابر ارتفاع ویوپورت)
+  //         pin: true, // در این فاصله سکشن پین بماند
+  //         scrub: true, // با اسکرول هماهنگ شود
+  //         markers: false,
+  //       },
+  //     });
 
-      // (3) متن آیدی اینستاگرام از راست وارد شود
-      tl.from('.insta-handle', {
-        x: 200,
-        opacity: 0,
-        duration: 1,
-        ease: 'power2.out',
-      });
-    }, containerRef);
+  //     // (3) متن آیدی اینستاگرام از راست وارد شود
+  //     tl.from('.insta-handle', {
+  //       x: 200,
+  //       opacity: 0,
+  //       duration: 1,
+  //       ease: 'power2.out',
+  //     });
+  //   }, containerRef);
 
-    //revert for clean animation
-    return () => ctx.revert();
-  }, []);
+  //   //revert for clean animation
+  //   return () => ctx.revert();
+  // }, []);
 
   const { data, isLoading, error } = useFetchData();
   const router = useRouter();
@@ -72,7 +72,11 @@ const FeaturedCoffees = () => {
   const products: Product[] = data;
 
   return (
-    <Box sx={{ py: { xl: 8, xs: 2 }, direction: 'rtl' }} ref={containerRef}>
+    <Box
+      sx={{ py: { xl: 8, xs: 2 }, direction: 'rtl' }}
+
+      // ref={containerRef}
+    >
       <Box
         sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}
         className='insta-handle'
