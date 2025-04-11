@@ -49,7 +49,7 @@ const TrackingPage: React.FC = () => {
     try {
       // Assume you have implemented a tracking endpoint at /api/order/track?phone=...
       const res = await fetch(
-        `http://${baseUrl}/api/order/my?phone=${encodeURIComponent(phone)}`
+        `${baseUrl}/api/order/my?phone=${encodeURIComponent(phone)}`
       );
       if (!res.ok) {
         throw new Error('خطا در دریافت سفارش‌ها');
