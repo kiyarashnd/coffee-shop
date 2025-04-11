@@ -8,7 +8,9 @@ const {
 const { Upload } = require('@aws-sdk/lib-storage');
 
 const minioEndpoint = process.env.MINIO_ENDPOINT || 'http://minio:9000';
-const minioPublicUrl = 'http://127.0.0.1:9000';
+// const minioPublicUrl = 'http://127.0.0.1:9000';
+//const minioPublicUrl = 'http://91.107.160.115:9000';
+const minioPublicUrl = 'https://minio.koorowshcoffee.ir';
 const BUCKET_NAME = process.env.MINIO_BUCKET || 'coffee-shop';
 
 const minioClient = new S3Client({

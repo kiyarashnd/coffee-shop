@@ -53,6 +53,7 @@ exports.login = async (req, res) => {
       //   sameSite: 'Strict',
       //   sameSite: 'Lax',
       sameSite: 'None',
+      domain: '.koorowshcoffee.ir', // ← خیلی مهم
       maxAge: 24 * 60 * 60 * 1000,
     });
     res.json({ accessToken: tokens.accessToken });

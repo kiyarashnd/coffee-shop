@@ -12,6 +12,7 @@ import {
   Divider,
 } from '@mui/material';
 import { formatPriceToToman } from '@/utils/formatPrice';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 type Order = {
   _id: string;
@@ -48,7 +49,7 @@ const TrackingPage: React.FC = () => {
     try {
       // Assume you have implemented a tracking endpoint at /api/order/track?phone=...
       const res = await fetch(
-        `http://localhost:3000/api/order/my?phone=${encodeURIComponent(phone)}`
+        `http://${baseUrl}/api/order/my?phone=${encodeURIComponent(phone)}`
       );
       if (!res.ok) {
         throw new Error('خطا در دریافت سفارش‌ها');

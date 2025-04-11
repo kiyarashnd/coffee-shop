@@ -9,9 +9,9 @@ const Hero = () => {
 
   const beans: { top: string; left: string }[] = [
     { top: '320px', left: '20%' },
-    { top: '320px', left: '20%' },
-    { top: '320px', left: '20%' },
-    { top: '320px', left: '20%' },
+    { top: '320px', left: '30%' },
+    { top: '350px', left: '10%' },
+    { top: '400px', left: '50%' },
     { top: '350px', left: '60%' },
     { top: '280px', left: '65%' },
     { top: '380px', left: '40%' },
@@ -93,11 +93,10 @@ const Hero = () => {
           }}
         />
         {beans?.map((item) => {
-          console.log('item is : ');
           return (
             <>
               <Box
-                className='coffee-bean'
+                className='coffee-bean  hidden sm:flex'
                 component='img'
                 src='/images/bean.png'
                 alt='bean1'

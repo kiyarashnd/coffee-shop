@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { useFetchData } from '@/hooks/useFetchData';
 import { useRouter } from 'next/navigation';

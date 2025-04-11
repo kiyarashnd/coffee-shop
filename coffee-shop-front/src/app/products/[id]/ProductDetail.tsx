@@ -331,12 +331,12 @@ const ProductDetail: React.FC = () => {
                 >
                   افزودن به سبد خرید
                 </Button>
-                <Link
+                {/* <Link
                   href={`/products/${product._id}`}
                   className='text-sm text-coffee-medium underline'
                 >
                   جزئیات محصول
-                </Link>
+                </Link> */}
               </div>
             </div>
           </Grid>

@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const fetchData = async (id?: string) => {
-  const url = id
-    ? `http://localhost:3000/api/products/${id}`
-    : 'http://localhost:3000/api/products';
+  const url = id ? `${baseUrl}/api/products/${id}` : `${baseUrl}/api/products`;
 
   const response = await fetch(url);
   if (!response.ok) {

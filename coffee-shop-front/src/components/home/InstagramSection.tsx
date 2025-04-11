@@ -165,6 +165,7 @@ const InstagramSection = () => {
               color: '#8B6B43',
               mb: 3,
             }}
+            dir='ltr'
           >
             @Koowrosh.coffee
           </Typography>

@@ -21,6 +21,7 @@ import CoffeeIcon from '@mui/icons-material/Coffee';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/useCartStore';
+import Divider from '@mui/material/Divider';
 
 const navLinks = [
   { label: 'خانه', href: '/' },
@@ -51,7 +52,11 @@ const Header = () => {
 
   const drawerContent = (
     <Box
-      sx={{ width: 250 }}
+      sx={{
+        width: 250,
+        backgroundColor: '#B0A27B',
+        height: '100%',
+      }}
       role='presentation'
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}
@@ -61,6 +66,7 @@ const Header = () => {
           <ListItem key={link.label}>
             <Link href={link.href} passHref>
               <ListItemText primary={link.label} />
+              <Divider orientation='horizontal' flexItem />
             </Link>
           </ListItem>
         ))}

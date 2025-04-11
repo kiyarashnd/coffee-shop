@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import PaymentModal from './PaymentModal'; // مسیر را بر اساس ساختار پروژه تنظیم کنید
 import { formatPriceToToman } from '@/utils/formatPrice';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 interface ShippingFormData {
   fullName: string;
@@ -59,7 +60,7 @@ export default function PaymentStep({
     valid: any[];
     invalid: any[];
   }> => {
-    const respProducts = await fetch('http://localhost:3000/api/products');
+    const respProducts = await fetch(`http://${baseUrl}/api/products`);
     if (!respProducts.ok) {
       throw new Error('خطا در دریافت اطلاعات محصولات');
     }
@@ -82,7 +83,7 @@ export default function PaymentStep({
   };
 
   const proceedPayment = async (itemsToPay: any[], newTotal: number) => {
-    const resp = await fetch('http://localhost:3000/api/payment/pay', {
+    const resp = await fetch(`http://${baseUrl}/api/payment/pay`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
