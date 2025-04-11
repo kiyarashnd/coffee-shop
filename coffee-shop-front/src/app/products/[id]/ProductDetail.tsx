@@ -302,14 +302,11 @@ const ProductDetail: React.FC = () => {
               />
               <Typography
                 variant='h4'
-                className='font-serif font-bold mt-2 mb-3 text-text-primary'
+                className='font-serif font-bold mt-2 mb-3 text-black'
               >
                 {product.name}
               </Typography>
-              <Typography
-                variant='h5'
-                className='text-coffee-dark font-bold mb-4'
-              >
+              <Typography variant='h5' className='font-bold mb-4 text-black'>
                 {formatPriceToToman(product.price)}
               </Typography>
 
@@ -344,7 +341,7 @@ const ProductDetail: React.FC = () => {
 
         {/* نمایش دسته‌بندی‌های مرتبط (مثلاً اگر بخواهید) */}
         <div className='mt-12'>
-          <Typography variant='h6' className='mb-4 font-bold text-coffee-dark'>
+          <Typography variant='h6' className='mb-4 font-bold text-black'>
             دسته‌بندی‌های مرتبط
           </Typography>
           <div className='flex flex-wrap gap-2'>

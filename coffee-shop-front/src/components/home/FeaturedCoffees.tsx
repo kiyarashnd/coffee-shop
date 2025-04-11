@@ -81,7 +81,13 @@ const FeaturedCoffees = () => {
         sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}
         className='insta-handle'
       >
-        <Typography variant='h4' component='h2' align='center' gutterBottom>
+        <Typography
+          variant='h4'
+          component='h2'
+          align='center'
+          gutterBottom
+          className='text-black'
+        >
           محصولات ویژه
         </Typography>
       </Box>
